@@ -51,18 +51,18 @@ def generate_images():
             timeout=120
         )
 
-        if response.status_code == 200:
+       if response.status_code == 200:
 
-    with open(f"image_{i}.jpg", "wb") as f:
-        f.write(response.content)
+           with open(f"image_{i}.jpg", "wb") as f:
+               f.write(response.content)
 
-    print(f"Downloaded image_{i}.jpg")
+           print(f"Downloaded image_{i}.jpg")
 
-else:
+       else:
 
-    print(
-        f"Failed image {i} - Status Code: {response.status_code}"
-    )
+           print(
+               f"Failed image {i} - Status Code: {response.status_code}"
+           )
 def create_background():
     width = 1080
     height = 1920
