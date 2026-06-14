@@ -38,7 +38,7 @@ def generate_images():
     print(f"Found {len(prompts)} prompts")
 
     for i, prompt in enumerate(prompts, start=1):
-        
+
         print(f"Generating image {i}")
 
         url = (
@@ -48,22 +48,33 @@ def generate_images():
 
         response = requests.get(
             url,
-            timeout=120
+            timeout=120,
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            }
         )
 
-       if response.status_code == 200:
+        if response.status_code == 200:
 
-           with open(f"image_{i}.jpg", "wb") as f:
-               f.write(response.content)
+            with open(
+                f"image_{i}.jpg",
+                "wb"
+            ) as f:
 
-           print(f"Downloaded image_{i}.jpg")
+                f.write(
+                    response.content
+                )
 
-       else:
+            print(
+                f"Downloaded image_{i}.jpg"
+            )
 
-           print(
-               f"Failed image {i} - Status Code: {response.status_code}"
-           )
-           
+        else:
+
+            print(
+                f"Failed image {i} - Status Code: {response.status_code}"
+            )
+
 def create_background():
     width = 1080
     height = 1920
