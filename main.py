@@ -63,6 +63,7 @@ def generate_images():
            print(
                f"Failed image {i} - Status Code: {response.status_code}"
            )
+           
 def create_background():
     width = 1080
     height = 1920
