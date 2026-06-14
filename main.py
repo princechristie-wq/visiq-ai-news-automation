@@ -3,6 +3,7 @@ from groq import Groq
 import asyncio
 import edge_tts
 import textwrap
+import random
 import numpy as np
 import cv2
 import requests
@@ -11,9 +12,10 @@ from moviepy import (
     AudioFileClip,
     ImageClip,
     TextClip,
-    CompositeVideoClip
+    CompositeVideoClip,
+    ColorClip,
+    concatenate_videoclips
 )
-
 client = Groq(
 api_key=os.environ["GROQ_API_KEY"]
 )
