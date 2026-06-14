@@ -1,12 +1,21 @@
 import os
 from groq import Groq
+import asyncio
+import edge_tts
 
 client = Groq(
 api_key=os.environ["GROQ_API_KEY"]
 )
 
 print("Starting...")
+async def create_voice(script):
 
+    communicate = edge_tts.Communicate(
+        text=script,
+        voice="en-US-ChristopherNeural"
+    )
+
+    await communicate.save("voice.mp3")
 # =====================================
 
 # TOPIC
@@ -130,4 +139,9 @@ with open("description.txt", "w", encoding="utf-8") as f:
 with open("hashtags.txt", "w", encoding="utf-8") as f:
     f.write(hashtags)
 
+asyncio.run(
+    create_voice(script)
+)
+
+print("VOICE CREATED")
 print("SUCCESS")
