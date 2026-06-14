@@ -31,4 +31,8 @@ jobs:
         with:
           name: visiq-ai-output
           path: |
-            topic.txt
+              topic.txt
+              script.txt
+              title.txt
+              description.txt
+              hashtags.txt
