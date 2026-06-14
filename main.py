@@ -5,6 +5,7 @@ import edge_tts
 import textwrap
 import numpy as np
 import cv2
+import requests
 
 from moviepy import (
     AudioFileClip,
