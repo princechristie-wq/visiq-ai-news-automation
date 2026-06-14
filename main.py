@@ -98,38 +98,36 @@ hashtags = ""
 
 for line in metadata.splitlines():
 
-if line.startswith("TITLE:"):
-    title = line.replace(
-        "TITLE:",
-        ""
-    ).strip()
+    if line.startswith("TITLE:"):
+        title = line.replace(
+            "TITLE:",
+            ""
+        ).strip()
 
-elif line.startswith("DESCRIPTION:"):
-    description = line.replace(
-        "DESCRIPTION:",
-        ""
-    ).strip()
+    elif line.startswith("DESCRIPTION:"):
+        description = line.replace(
+            "DESCRIPTION:",
+            ""
+        ).strip()
 
-elif line.startswith("HASHTAGS:"):
-    hashtags = line.replace(
-        "HASHTAGS:",
-        ""
-    ).strip()
-```
+    elif line.startswith("HASHTAGS:"):
+        hashtags = line.replace(
+            "HASHTAGS:",
+            ""
+        ).strip()
 
 with open("topic.txt", "w", encoding="utf-8") as f:
-f.write(topic)
-
+    f.write(topic)
 with open("script.txt", "w", encoding="utf-8") as f:
-f.write(script)
+    f.write(script)
 
 with open("title.txt", "w", encoding="utf-8") as f:
-f.write(title)
+    f.write(title)
 
 with open("description.txt", "w", encoding="utf-8") as f:
-f.write(description)
+    f.write(description)
 
 with open("hashtags.txt", "w", encoding="utf-8") as f:
-f.write(hashtags)
+    f.write(hashtags)
 
 print("SUCCESS")
