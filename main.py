@@ -205,6 +205,42 @@ Return narration only.
 script = script_response.choices[0].message.content.strip()
 
 # =====================================
+# SCENE PROMPTS
+# =====================================
+
+scene_response = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[
+        {
+            "role": "user",
+            "content": f"""
+You are creating visuals for a YouTube AI News Short.
+
+TOPIC:
+{topic}
+
+SCRIPT:
+{script}
+
+Create exactly 10 image prompts.
+
+Requirements:
+- AI related
+- Futuristic
+- Cinematic
+- Suitable for YouTube Shorts
+- One prompt per line
+- No numbering
+
+Return only the prompts.
+"""
+        }
+    ]
+)
+
+scene_prompts = scene_response.choices[0].message.content.strip()
+
+# =====================================
 
 # METADATA
 
@@ -270,6 +306,9 @@ with open("description.txt", "w", encoding="utf-8") as f:
 
 with open("hashtags.txt", "w", encoding="utf-8") as f:
     f.write(hashtags)
+
+with open("scene_prompts.txt", "w", encoding="utf-8") as f:
+    f.write(scene_prompts)
 
 asyncio.run(
     create_voice(script)
