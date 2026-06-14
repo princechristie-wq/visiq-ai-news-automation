@@ -12,7 +12,7 @@ async def create_voice(script):
 
     communicate = edge_tts.Communicate(
         text=script,
-        voice="en-US-ChristopherNeural"
+        voice="en-US-ChristopherNeural",
         rate="+25%"
     )
 
