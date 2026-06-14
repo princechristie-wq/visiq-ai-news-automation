@@ -98,7 +98,6 @@ hashtags = ""
 
 for line in metadata.splitlines():
 
-```
 if line.startswith("TITLE:"):
     title = line.replace(
         "TITLE:",
