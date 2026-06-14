@@ -35,7 +35,7 @@ def generate_images():
 
     prompts = scene_prompts.splitlines()
 
-print(f"Found {len(prompts)} prompts")
+    print(f"Found {len(prompts)} prompts")
 
     for i, prompt in enumerate(prompts, start=1):
         
