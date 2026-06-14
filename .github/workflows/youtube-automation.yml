@@ -36,6 +36,7 @@ jobs:
               title.txt
               description.txt
               hashtags.txt
+              scene_prompts.txt
               voice.mp3
               background.jpg
               final_video.mp4
