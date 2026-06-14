@@ -35,7 +35,10 @@ def generate_images():
 
     prompts = scene_prompts.splitlines()
 
+print(f"Found {len(prompts)} prompts")
+
     for i, prompt in enumerate(prompts, start=1):
+        print(f"Generating image {i}")
 
         url = (
             "https://image.pollinations.ai/prompt/"
