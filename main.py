@@ -78,6 +78,7 @@ def generate_images():
             )
 
 def create_background():
+
     width = 1080
     height = 1920
 
@@ -88,14 +89,47 @@ def create_background():
 
     for y in range(height):
 
-        value = int(
-            20 + (y / height) * 80
+        r = int(
+            20 + (y / height) * 40
+        )
+
+        g = int(
+            20 + (y / height) * 20
+        )
+
+        b = int(
+            60 + (y / height) * 120
         )
 
         image[y, :] = (
-            value,
-            value,
-            value + 20
+            b,
+            g,
+            r
+        )
+
+    for _ in range(150):
+
+        x = random.randint(
+            0,
+            width
+        )
+
+        y = random.randint(
+            0,
+            height
+        )
+
+        radius = random.randint(
+            2,
+            5
+        )
+
+        cv2.circle(
+            image,
+            (x, y),
+            radius,
+            (255, 255, 255),
+            -1
         )
 
     cv2.rectangle(
@@ -108,19 +142,18 @@ def create_background():
 
     cv2.putText(
         image,
-        "BREAKING AI NEWS",
+        "AI NEWS UPDATE",
         (60, 120),
         cv2.FONT_HERSHEY_SIMPLEX,
         2,
         (255, 255, 255),
-        5
+        4
     )
 
     cv2.imwrite(
         "background.jpg",
         image
     )
-
 
 def create_video(topic):
 
