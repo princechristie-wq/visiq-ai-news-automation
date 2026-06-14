@@ -38,6 +38,7 @@ def generate_images():
 print(f"Found {len(prompts)} prompts")
 
     for i, prompt in enumerate(prompts, start=1):
+        
         print(f"Generating image {i}")
 
         url = (
