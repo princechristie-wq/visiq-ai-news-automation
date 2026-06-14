@@ -25,8 +25,13 @@ async def create_voice(script):
         voice="en-US-ChristopherNeural",
         rate="+25%"
     )
-def create_background():
 
+    await communicate.save(
+        "voice.mp3"
+    )
+
+
+def create_background():
     width = 1080
     height = 1920
 
