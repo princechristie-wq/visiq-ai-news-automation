@@ -31,6 +31,42 @@ async def create_voice(script):
         "voice.mp3"
     )
 
+def generate_images():
+
+    prompts = scene_prompts.splitlines()
+
+    for i, prompt in enumerate(prompts, start=1):
+
+        url = (
+            "https://image.pollinations.ai/prompt/"
+            + requests.utils.quote(prompt)
+        )
+
+        response = requests.get(
+            url,
+            timeout=120
+        )
+
+        if response.status_code == 200:
+
+            with open(
+                f"image_{i}.jpg",
+                "wb"
+            ) as f:
+
+                f.write(
+                    response.content
+                )
+
+            print(
+                f"Downloaded image_{i}.jpg"
+            )
+
+        else:
+
+            print(
+                f"Failed image {i}"
+            )
 
 def create_background():
     width = 1080
@@ -314,6 +350,8 @@ with open("scene_prompts.txt", "w", encoding="utf-8") as f:
 asyncio.run(
     create_voice(script)
 )
+
+generate_images()
 
 create_video(topic)
 
