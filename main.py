@@ -7,6 +7,10 @@ import random
 import numpy as np
 import cv2
 import requests
+import moviepy
+
+print("MOVIEPY VERSION:", 
+moviepy.__version__)
 
 from moviepy import (
     AudioFileClip,
