@@ -173,12 +173,12 @@ def create_video(topic):
     )
 
     with open(
-    "scene_prompts.txt",
-    "r",
-    encoding="utf-8"
-) as f:
+        "scene_prompts.txt",
+        "r",
+        encoding="utf-8"
+    ) as f:
 
-    scenes = f.read().splitlines()
+        scenes = f.read().splitlines()
 
     clips = []
 
