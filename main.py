@@ -217,7 +217,6 @@ for index, scene in enumerate(scenes):
     )
 
     clips.append(txt)
-    )
 
     final_video = CompositeVideoClip(
     [background] + clips + [brand],
