@@ -179,7 +179,6 @@ def create_video(topic):
 ) as f:
 
     scenes = f.read().splitlines()
-    )
 
     clips = []
 
@@ -220,7 +219,6 @@ for index, scene in enumerate(scenes):
     clips.append(txt)
     )
 
-    final_video = CompositeVideoClip(
     final_video = CompositeVideoClip(
     [background] + clips + [brand],
         size=(1080, 1920)
