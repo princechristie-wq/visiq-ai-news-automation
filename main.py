@@ -168,9 +168,10 @@ def create_video(topic):
     create_background()
 
     background = (
-        ImageClip("background.jpg")
-        .with_duration(audio.duration)
-    )
+    ImageClip("background.jpg")
+    .with_duration(audio.duration)
+    .resized(lambda t: 1 + 0.05 * t / audio.duration)
+)
 
     with open(
         "scene_prompts.txt",
