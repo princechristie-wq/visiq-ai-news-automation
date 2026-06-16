@@ -199,9 +199,10 @@ def create_video(topic):
 
         subtitle = TextClip(
             text=short_text,
-            font_size=55,
+            font_size=75,
             color="white",
-            size=(900, None),
+            bg_color="black",
+            size=(1000, None),
             method="caption"
         )
 
@@ -212,7 +213,7 @@ def create_video(topic):
     .with_position(
         lambda t: (
             "center",
-            1300 + int(20 * np.sin(t * 4))
+            850 + int(20 * np.sin(t * 4))
         )
     )
 )
@@ -230,7 +231,7 @@ def create_video(topic):
     headline = (
     headline
     .with_duration(audio.duration)
-    .with_position(("center", 100))
+    .with_position(("center", 250))
 )
     brand = TextClip(
         text="VISIQ AI",
