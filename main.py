@@ -38,6 +38,11 @@ async def create_voice(script):
     )
 
 def generate_images():
+    for i in range(1, 11):
+    print(
+        f"image_{i}.jpg exists:",
+        os.path.exists(f"image_{i}.jpg")
+    )
 
     prompts = scene_prompts.splitlines()
 
@@ -182,44 +187,49 @@ def create_video(topic):
         scenes = f.read().splitlines()
 
     clips = []
+    image_clips = []
+    image_file = f"image_{index + 1}.jpg"
 
-    scene_duration = audio.duration / max(
-        len(scenes),
-        1
+if os.path.exists(image_file):
+
+    img = (
+        ImageClip(image_file)
+        .resized(height=900)
+        .with_start(index * scene_duration)
+        .with_duration(scene_duration)
+        .with_position(("center", 350))
     )
 
-    for index, scene in enumerate(scenes):
+    image_clips.append(img)
 
-        short_text = "\n".join(
-            textwrap.wrap(
-                scene[:60],
-                width=18
-            )
-        )
+for index, scene in enumerate(scenes):
 
-        subtitle = TextClip(
-            text=short_text,
-            font_size=75,
-            color="white",
-            bg_color="black",
-            size=(1000, None),
-            method="caption"
-        )
-
-        subtitle = (
-    subtitle
-    .with_start(index * scene_duration)
-    .with_duration(scene_duration)
-    .with_position(
-        lambda t: (
-            "center",
-            850 + int(20 * np.sin(t * 4))
+    short_text = "\n".join(
+        textwrap.wrap(
+            scene[:60],
+            width=18
         )
     )
-)
+
+    subtitle = TextClip(
+        text=short_text,
+        font_size=75,
+        color="white",
+        bg_color="black",
+        size=(1000, None),
+        method="caption"
+    )
+
+    subtitle = (
+        subtitle
+        .with_start(index * scene_duration)
+        .with_duration(scene_duration)
+        .with_position(("center", 1100))
+    )
 
     clips.append(subtitle)
 
+    print("Added subtitle:", short_text)
     headline = TextClip(
     text=topic[:50],
     font_size=65,
@@ -248,7 +258,11 @@ def create_video(topic):
     )
 
     final_video = CompositeVideoClip(
-    [background, headline] + clips + [brand],
+    [background]
+    + image_clips
+    + [headline]
+    + clips
+    + [brand],
     size=(1080, 1920)
 )
 
