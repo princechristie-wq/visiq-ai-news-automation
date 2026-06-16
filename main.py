@@ -230,7 +230,10 @@ def create_video(topic):
     headline
     .with_duration(audio.duration)
     .with_position(
-        ("center", 100)
+        lambda t: (
+            "center",
+            max(100, int(-150 + t * 400))
+        )
     )
 )
     brand = TextClip(
