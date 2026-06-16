@@ -182,41 +182,41 @@ def create_video(topic):
 
     clips = []
 
-scene_duration = audio.duration / max(
-    len(scenes),
-    1
-)
-
-for index, scene in enumerate(scenes):
-
-    short_text = "\n".join(
-        textwrap.wrap(
-            scene[:80],
-            width=20
-        )
+    scene_duration = audio.duration / max(
+        len(scenes),
+        1
     )
 
-    txt = TextClip(
-        text=short_text,
-        font_size=60,
-        color="white",
-        size=(900, None),
-        method="caption"
-    )
+    for index, scene in enumerate(scenes):
 
-    txt = (
-        txt
-        .with_start(index * scene_duration)
-        .with_duration(scene_duration)
-        .with_position(
-            (
-                "center",
-                400 + (index % 3) * 120
+        short_text = "\n".join(
+            textwrap.wrap(
+                scene[:80],
+                width=20
             )
         )
-    )
 
-    clips.append(txt)
+        txt = TextClip(
+            text=short_text,
+            font_size=60,
+            color="white",
+            size=(900, None),
+            method="caption"
+        )
+
+        txt = (
+            txt
+            .with_start(index * scene_duration)
+            .with_duration(scene_duration)
+            .with_position(
+                (
+                    "center",
+                    400 + (index % 3) * 120
+                )
+            )
+        )
+
+        clips.append(txt)
 
     final_video = CompositeVideoClip(
     [background] + clips + [brand],
