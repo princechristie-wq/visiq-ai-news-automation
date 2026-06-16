@@ -216,7 +216,7 @@ def create_video(topic):
             )
         )
 
-      clips.append(subtitle)
+    clips.append(subtitle)
 
     headline = TextClip(
     text=topic[:50],
