@@ -139,10 +139,10 @@ def create_background():
     cv2.rectangle(
         image,
         (0, 0),
-        (width, 180),
-        (0, 0, 180),
-        -1
-    )
+        (width, 220),
+        (255, 60, 60),
+       -1
+)
 
     cv2.putText(
         image,
