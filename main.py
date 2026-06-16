@@ -230,12 +230,7 @@ def create_video(topic):
     headline = (
     headline
     .with_duration(audio.duration)
-    .with_position(
-        lambda t: (
-            "center",
-            max(100, int(-150 + t * 400))
-        )
-    )
+    .with_position(("center", 100))
 )
     brand = TextClip(
         text="VISIQ AI",
