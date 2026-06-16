@@ -219,13 +219,11 @@ def create_video(topic):
         clips.append(txt)
 
     final_video = CompositeVideoClip(
-    [background] + clips + [brand],
+        [background] + clips,
         size=(1080, 1920)
     )
 
-    final_video = final_video.with_audio(
-        audio
-    )
+    final_video = final_video.with_audio(audio)
 
     final_video.write_videofile(
         "final_video.mp4",
