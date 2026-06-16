@@ -239,7 +239,7 @@ def create_video(topic):
 )
     brand = TextClip(
         text="VISIQ AI",
-        font_size=50,
+        font_size=70,
         color="white"
     )
 
