@@ -216,8 +216,23 @@ def create_video(topic):
             )
         )
 
-        clips.append(subtitle)
+      clips.append(subtitle)
 
+    headline = TextClip(
+    text=topic[:50],
+    font_size=65,
+    color="white",
+    size=(1000, None),
+    method="caption"
+)
+
+headline = (
+    headline
+    .with_duration(audio.duration)
+    .with_position(
+        ("center", 100)
+    )
+)
     brand = TextClip(
         text="VISIQ AI",
         font_size=50,
