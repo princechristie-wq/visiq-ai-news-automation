@@ -209,9 +209,9 @@ def create_video(topic):
             .with_start(index * scene_duration)
             .with_duration(scene_duration)
             .with_position(
-                (
+                lambda t: (
                     "center",
-                    1300
+                    1300 + int(20 * np.sin(t * 4))
                 )
             )
         )
