@@ -229,7 +229,7 @@ for index, scene in enumerate(scenes):
     .with_position(
         ("center", 1750)
     )
-    
+    )
     final_video = CompositeVideoClip(
     [background] + clips + [brand],
     size=(1080, 1920)
