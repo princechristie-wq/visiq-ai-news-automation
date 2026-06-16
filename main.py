@@ -205,18 +205,18 @@ def create_video(topic):
         )
 
         subtitle = (
-            subtitle
-            .with_start(index * scene_duration)
-            .with_duration(scene_duration)
-            .with_position(
-                lambda t: (
-                    "center",
-                    1300 + int(20 * np.sin(t * 4))
-                )
-            )
+    subtitle
+    .with_start(index * scene_duration)
+    .with_duration(scene_duration)
+    .with_position(
+        lambda t: (
+            "center",
+            1300 + int(20 * np.sin(t * 4))
         )
+    )
+)
 
-    clips.append(subtitle)
+clips.append(subtitle)
 
     headline = TextClip(
     text=topic[:50],
