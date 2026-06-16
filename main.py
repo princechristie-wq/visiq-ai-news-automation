@@ -248,9 +248,9 @@ headline = (
     )
 
     final_video = CompositeVideoClip(
-        [background] + clips + [brand],
-        size=(1080, 1920)
-    )
+    [background, headline] + clips + [brand],
+    size=(1080, 1920)
+)
 
     final_video = final_video.with_audio(
         audio
