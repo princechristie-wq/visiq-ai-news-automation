@@ -231,9 +231,9 @@ for index, scene in enumerate(scenes):
     )
     
     final_video = CompositeVideoClip(
-        [background] + clips,
-        size=(1080, 1920)
-    )
+    [background] + clips + [brand],
+    size=(1080, 1920)
+)
 
     final_video = final_video.with_audio(audio)
 
