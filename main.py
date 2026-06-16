@@ -146,7 +146,7 @@ def create_background():
 
     cv2.putText(
         image,
-        "AI NEWS UPDATE",
+        "VISIQ AI NEWS",
         (60, 120),
         cv2.FONT_HERSHEY_SIMPLEX,
         2,
