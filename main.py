@@ -182,42 +182,54 @@ def create_video(topic):
 
     clips = []
 
-    scene_duration = audio.duration / max(
-        len(scenes),
-        1
+scene_duration = audio.duration / max(
+    len(scenes),
+    1
+)
+
+for index, scene in enumerate(scenes):
+
+    short_text = "\n".join(
+        textwrap.wrap(
+            scene[:60],
+            width=18
+        )
     )
 
-    for index, scene in enumerate(scenes):
+    subtitle = TextClip(
+        text=short_text,
+        font_size=55,
+        color="white",
+        size=(900, None),
+        method="caption"
+    )
 
-        short_text = "\n".join(
-            textwrap.wrap(
-                scene[:80],
-                width=20
+    subtitle = (
+        subtitle
+        .with_start(index * scene_duration)
+        .with_duration(scene_duration)
+        .with_position(
+            (
+                "center",
+                1300
             )
         )
+    )
 
-        txt = TextClip(
-            text=short_text,
-            font_size=60,
-            color="white",
-            size=(900, None),
-            method="caption"
-        )
+    clips.append(subtitle)
+    brand = TextClip(
+    text="VISIQ AI",
+    font_size=50,
+    color="white"
+)
 
-        txt = (
-            txt
-            .with_start(index * scene_duration)
-            .with_duration(scene_duration)
-            .with_position(
-                (
-                    "center",
-                    400 + (index % 3) * 120
-                )
-            )
-        )
-
-        clips.append(txt)
-
+    brand = (
+    brand
+    .with_duration(audio.duration)
+    .with_position(
+        ("center", 1750)
+    )
+    
     final_video = CompositeVideoClip(
         [background] + clips,
         size=(1080, 1920)
