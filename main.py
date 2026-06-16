@@ -182,60 +182,64 @@ def create_video(topic):
 
     clips = []
 
-scene_duration = audio.duration / max(
-    len(scenes),
-    1
-)
-
-for index, scene in enumerate(scenes):
-
-    short_text = "\n".join(
-        textwrap.wrap(
-            scene[:60],
-            width=18
-        )
+    scene_duration = audio.duration / max(
+        len(scenes),
+        1
     )
 
-    subtitle = TextClip(
-        text=short_text,
-        font_size=55,
-        color="white",
-        size=(900, None),
-        method="caption"
-    )
+    for index, scene in enumerate(scenes):
 
-    subtitle = (
-        subtitle
-        .with_start(index * scene_duration)
-        .with_duration(scene_duration)
-        .with_position(
-            (
-                "center",
-                1300
+        short_text = "\n".join(
+            textwrap.wrap(
+                scene[:60],
+                width=18
             )
         )
-    )
 
-    clips.append(subtitle)
+        subtitle = TextClip(
+            text=short_text,
+            font_size=55,
+            color="white",
+            size=(900, None),
+            method="caption"
+        )
+
+        subtitle = (
+            subtitle
+            .with_start(index * scene_duration)
+            .with_duration(scene_duration)
+            .with_position(
+                (
+                    "center",
+                    1300
+                )
+            )
+        )
+
+        clips.append(subtitle)
+
     brand = TextClip(
-    text="VISIQ AI",
-    font_size=50,
-    color="white"
-)
+        text="VISIQ AI",
+        font_size=50,
+        color="white"
+    )
 
     brand = (
-    brand
-    .with_duration(audio.duration)
-    .with_position(
-        ("center", 1750)
+        brand
+        .with_duration(audio.duration)
+        .with_position(
+            ("center", 1750)
+        )
     )
-    )
-    final_video = CompositeVideoClip(
-    [background] + clips + [brand],
-    size=(1080, 1920)
-)
 
-    final_video = final_video.with_audio(audio)
+    final_video = CompositeVideoClip(
+        [background] + clips + [brand],
+        size=(1080, 1920)
+    )
+
+    final_video = final_video.with_audio(
+        audio
+    )
 
     final_video.write_videofile(
         "final_video.mp4",
