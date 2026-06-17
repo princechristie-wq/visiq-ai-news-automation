@@ -188,11 +188,11 @@ def create_video(topic):
         1
     )
 
-    for index, scene in enumerate(scenes):
+for index, scene in enumerate(scenes):
 
-        image_file = f"image_{index + 1}.jpg"
+    image_file = f"image_{index + 1}.jpg"
 
-        if os.path.exists(image_file):
+    if os.path.exists(image_file):
 
         print("Using image:", image_file)
 
@@ -216,7 +216,6 @@ def create_video(topic):
             width=22
         )
     )
-
     print("Subtitle:", short_text)
 
     subtitle_bg = (
