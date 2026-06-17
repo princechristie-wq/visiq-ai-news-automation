@@ -202,7 +202,7 @@ def create_video(topic):
 
             img = (
                 ImageClip(image_file)
-                .resized(height=850)
+                .resized(height=1050)
                 .with_start(index * scene_duration)
                 .with_duration(scene_duration)
                 .with_position(("center", 320))
@@ -229,18 +229,17 @@ def create_video(topic):
 
         subtitle = TextClip(
             text=short_text,
-            font_size=60,
+            font_size=55,
             color="white",
-            bg_color="black",
-            size=(1000, None),
+            size=(900, None),
             method="caption"
-        )
+       )
 
         subtitle = (
             subtitle
             .with_start(index * scene_duration)
             .with_duration(scene_duration)
-            .with_position(("center", 1250))
+            .with_position(("center", 1450))
         )
 
         clips.append(subtitle)
@@ -260,7 +259,7 @@ def create_video(topic):
     headline = (
         headline
         .with_duration(audio.duration)
-        .with_position(("center", 250))
+        .with_position(("center", 170))
     )
 
     # ==========================
@@ -276,7 +275,7 @@ def create_video(topic):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1750))
+        .with_position(("center", 1820))
     )
 
     # ==========================
