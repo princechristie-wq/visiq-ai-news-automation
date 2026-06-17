@@ -188,62 +188,63 @@ def create_video(topic):
         1
     )
 
-    for index, scene in enumerate(scenes):
+   for index, scene in enumerate(scenes):
 
-        # ==========================
-        # IMAGE
-        # ==========================
+    image_file = f"image_{index + 1}.jpg"
 
-        image_file = f"image_{index + 1}.jpg"
+    if os.path.exists(image_file):
 
-        if os.path.exists(image_file):
+        print("Using image:", image_file)
 
-            print("Using image:", image_file)
-
-            img = (
-                ImageClip(image_file)
-                .resized(height=1050)
-                .with_start(index * scene_duration)
-                .with_duration(scene_duration)
-                .with_position(("center", 320))
-            )
-
-            image_clips.append(img)
-
-        else:
-
-            print("Missing image:", image_file)
-
-        # ==========================
-        # SUBTITLE
-        # ==========================
-
-        short_text = "\n".join(
-            textwrap.wrap(
-                scene[:60],
-                width=18
-            )
+        img = (
+            ImageClip(image_file)
+            .resized(height=1250)
+            .with_start(index * scene_duration)
+            .with_duration(scene_duration)
+            .with_position(("center", 280))
         )
 
-        print("Subtitle:", short_text)
+        image_clips.append(img)
 
-        subtitle = TextClip(
+    else:
+
+        print("Missing image:", image_file)
+
+    short_text = "\n".join(
+        textwrap.wrap(
+            scene[:60],
+            width=22
+        )
+    )
+
+    print("Subtitle:", short_text)
+
+    subtitle_bg = (
+        ColorClip(
+            size=(980, 180),
+            color=(0, 0, 0)
+        )
+        .with_opacity(0.65)
+        .with_start(index * scene_duration)
+        .with_duration(scene_duration)
+        .with_position(("center", 1500))
+    )
+
+    subtitle = (
+        TextClip(
             text=short_text,
-            font_size=55,
+            font_size=48,
             color="white",
             size=(900, None),
             method="caption"
-       )
-
-        subtitle = (
-            subtitle
-            .with_start(index * scene_duration)
-            .with_duration(scene_duration)
-            .with_position(("center", 1450))
         )
+        .with_start(index * scene_duration)
+        .with_duration(scene_duration)
+        .with_position(("center", 1525))
+    )
 
-        clips.append(subtitle)
-
+    clips.append(subtitle_bg)
+    clips.append(subtitle)
     # ==========================
     # HEADLINE
     # ==========================
@@ -259,7 +260,7 @@ def create_video(topic):
     headline = (
         headline
         .with_duration(audio.duration)
-        .with_position(("center", 170))
+        .with_position(("center", 120))
     )
 
     # ==========================
@@ -275,7 +276,7 @@ def create_video(topic):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1820))
+        .with_position(("center", 1760))
     )
 
     # ==========================
