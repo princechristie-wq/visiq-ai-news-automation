@@ -190,7 +190,7 @@ def create_video(topic):
 
     for index, scene in enumerate(scenes):
 
-        image_file = ...
+        image_file = f"image_{index + 1}.jpg"
 
         if os.path.exists(image_file):
 
