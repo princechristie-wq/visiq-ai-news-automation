@@ -160,83 +160,111 @@ def create_background():
 
 def create_video(topic):
 
-    audio = AudioFileClip(
-        "voice.mp3"
-    )
+    audio = AudioFileClip("voice.mp3")
 
     create_background()
 
     background = (
-    ImageClip("background.jpg")
-    .with_duration(audio.duration)
-    .resized(lambda t: 1 + 0.05 * t / audio.duration)
-)
+        ImageClip("background.jpg")
+        .with_duration(audio.duration)
+    )
 
     with open(
         "scene_prompts.txt",
         "r",
         encoding="utf-8"
     ) as f:
-
         scenes = f.read().splitlines()
+
+    print("Scenes loaded:", len(scenes))
 
     clips = []
     image_clips = []
-    image_file = f"image_{index + 1}.jpg"
 
-if os.path.exists(image_file):
-
-    img = (
-        ImageClip(image_file)
-        .resized(height=900)
-        .with_start(index * scene_duration)
-        .with_duration(scene_duration)
-        .with_position(("center", 350))
+    scene_duration = audio.duration / max(
+        len(scenes),
+        1
     )
 
-    image_clips.append(img)
+    for index, scene in enumerate(scenes):
 
-for index, scene in enumerate(scenes):
+        # ==========================
+        # IMAGE
+        # ==========================
 
-    short_text = "\n".join(
-        textwrap.wrap(
-            scene[:60],
-            width=18
+        image_file = f"image_{index + 1}.jpg"
+
+        if os.path.exists(image_file):
+
+            print("Using image:", image_file)
+
+            img = (
+                ImageClip(image_file)
+                .resized(height=850)
+                .with_start(index * scene_duration)
+                .with_duration(scene_duration)
+                .with_position(("center", 320))
+            )
+
+            image_clips.append(img)
+
+        else:
+
+            print("Missing image:", image_file)
+
+        # ==========================
+        # SUBTITLE
+        # ==========================
+
+        short_text = "\n".join(
+            textwrap.wrap(
+                scene[:60],
+                width=18
+            )
         )
-    )
 
-    subtitle = TextClip(
-        text=short_text,
-        font_size=75,
+        print("Subtitle:", short_text)
+
+        subtitle = TextClip(
+            text=short_text,
+            font_size=60,
+            color="white",
+            bg_color="black",
+            size=(1000, None),
+            method="caption"
+        )
+
+        subtitle = (
+            subtitle
+            .with_start(index * scene_duration)
+            .with_duration(scene_duration)
+            .with_position(("center", 1250))
+        )
+
+        clips.append(subtitle)
+
+    # ==========================
+    # HEADLINE
+    # ==========================
+
+    headline = TextClip(
+        text=topic[:60],
+        font_size=65,
         color="white",
-        bg_color="black",
         size=(1000, None),
         method="caption"
     )
 
-    subtitle = (
-        subtitle
-        .with_start(index * scene_duration)
-        .with_duration(scene_duration)
-        .with_position(("center", 1100))
+    headline = (
+        headline
+        .with_duration(audio.duration)
+        .with_position(("center", 250))
     )
 
-    clips.append(subtitle)
+    # ==========================
+    # BRAND
+    # ==========================
 
-    print("Added subtitle:", short_text)
-    headline = TextClip(
-    text=topic[:50],
-    font_size=65,
-    color="white",
-    size=(1000, None),
-    method="caption"
-)
-
-    headline = (
-    headline
-    .with_duration(audio.duration)
-    .with_position(("center", 250))
-)
     brand = TextClip(
         text="VISIQ AI",
         font_size=70,
@@ -246,23 +274,23 @@ for index, scene in enumerate(scenes):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(
-            ("center", 1750)
-        )
+        .with_position(("center", 1750))
     )
+
+    # ==========================
+    # COMPOSITION
+    # ==========================
 
     final_video = CompositeVideoClip(
-    [background]
-    + image_clips
-    + [headline]
-    + clips
-    + [brand],
-    size=(1080, 1920)
-)
-
-    final_video = final_video.with_audio(
-        audio
+        [background]
+        + image_clips
+        + [headline]
+        + clips
+        + [brand],
+        size=(1080, 1920)
     )
+
+    final_video = final_video.with_audio(audio)
 
     final_video.write_videofile(
         "final_video.mp4",
