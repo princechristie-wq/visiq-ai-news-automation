@@ -37,12 +37,6 @@ async def create_voice(script):
         "voice.mp3"
     )
 
-def generate_images():
-    for i in range(1, 11):
-    print(
-        f"image_{i}.jpg exists:",
-        os.path.exists(f"image_{i}.jpg")
-    )
 
     prompts = scene_prompts.splitlines()
 
