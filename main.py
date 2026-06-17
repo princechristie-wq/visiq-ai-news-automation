@@ -38,6 +38,8 @@ async def create_voice(script):
     )
 
 
+def generate_images():
+
     prompts = scene_prompts.splitlines()
 
     print(f"Found {len(prompts)} prompts")
@@ -80,8 +82,8 @@ async def create_voice(script):
                 f"Failed image {i} - Status Code: {response.status_code}"
             )
 
-def create_background():
 
+def create_background():
     width = 1080
     height = 1920
 
