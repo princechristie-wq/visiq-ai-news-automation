@@ -188,35 +188,35 @@ def create_video(topic):
         1
     )
 
-for index, scene in enumerate(scenes):
+    for index, scene in enumerate(scenes):
 
-    image_file = f"image_{index + 1}.jpg"
+        image_file = ...
 
-    if os.path.exists(image_file):
+        if os.path.exists(image_file):
 
-        print("Using image:", image_file)
+            print("Using image:", image_file)
 
-        img = (
-            ImageClip(image_file)
-            .resized(height=1250)
-            .with_start(index * scene_duration)
-            .with_duration(scene_duration)
-            .with_position(("center", 280))
-        )
+            img = (
+                ImageClip(image_file)
+                .resized(height=1250)
+                .with_start(index * scene_duration)
+                .with_duration(scene_duration)
+                .with_position(("center", 280))
+            )
 
-        image_clips.append(img)
+            image_clips.append(img)
 
-    else:
+        else:
 
-        print("Missing image:", image_file)
+            print("Missing image:", image_file)
 
-    short_text = "\n".join(
-        textwrap.wrap(
-            scene[:60],
-            width=22
-        )
-    )
-    print("Subtitle:", short_text)
+        short_text = "\n".join(
+            textwrap.wrap(
+                scene[:60],
+                width=22
+            )
+        )    
+        print("Subtitle:", short_text)
 
     subtitle_bg = (
         ColorClip(
