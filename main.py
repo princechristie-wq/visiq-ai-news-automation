@@ -235,16 +235,18 @@ def create_video(topic):
     # BRAND
     # ==========================
 
-    brand = TextClip(
-        text="VISIQ AI",
-        font_size=70,
-        color="white"
+     brand = TextClip(
+         text="VISIQ AI",
+         font_size=70,
+         color="white",
+         size=(1080, 200),
+         method="caption"
     )
 
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1780))
+        .with_position(("center", 1700))
     )
 
     # ==========================
