@@ -140,7 +140,7 @@ def create_background():
     cv2.rectangle(
         image,
         (0, 0),
-        (width, 220),
+        (width, 140),
         (255, 60, 60),
        -1
 )
@@ -235,14 +235,15 @@ def create_video(topic):
     subtitle = (
         TextClip(
             text=short_text,
-            font_size=65,
+            font_size=60,
             color="white",
-            size=(900, None),
+            bg_color="black",
+            size=(950, None),
             method="caption"
         )
         .with_start(index * scene_duration)
         .with_duration(scene_duration)
-        .with_position(("center", 1525))
+        .with_position(("center", 1500))
     )
 
     clips.append(subtitle_bg)
@@ -253,7 +254,7 @@ def create_video(topic):
 
     headline = TextClip(
         text=topic[:60],
-        font_size=40,
+        font_size=55,
         color="white",
         size=(900, None),
         method="caption"
@@ -278,7 +279,7 @@ def create_video(topic):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1700))
+        .with_position(("center", 1750))
     )
 
     # ==========================
