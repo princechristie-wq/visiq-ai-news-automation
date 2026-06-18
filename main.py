@@ -244,7 +244,7 @@ def create_video(topic):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1600))
+        .with_position(("center", 1780))
     )
 
     # ==========================
