@@ -213,41 +213,6 @@ def create_video(topic):
 
             print("Missing image:", image_file)
 
-        short_text = "\n".join(
-            textwrap.wrap(
-                scene[:60],
-                width=22
-            )
-        )    
-        print("Subtitle:", short_text)
-
-    subtitle_bg = (
-        ColorClip(
-            size=(980, 180),
-            color=(0, 0, 0)
-        )
-        .with_opacity(0.65)
-        .with_start(index * scene_duration)
-        .with_duration(scene_duration)
-        .with_position(("center", 1450))
-    )
-
-    subtitle = (
-        TextClip(
-            text=short_text,
-            font_size=60,
-            color="white",
-            bg_color="black",
-            size=(950, 250),
-            method="caption"
-        )
-        .with_start(index * scene_duration)
-        .with_duration(scene_duration)
-        .with_position(("center", 1350))
-    )
-
-    clips.append(subtitle_bg)
-    clips.append(subtitle)
     # ==========================
     # HEADLINE
     # ==========================
@@ -290,7 +255,6 @@ def create_video(topic):
         [background]
         + image_clips
         + [headline]
-        + clips
         + [brand],
         size=(1080, 1920)
     )
