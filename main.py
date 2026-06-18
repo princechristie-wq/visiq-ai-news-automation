@@ -140,7 +140,7 @@ def create_background():
     cv2.rectangle(
         image,
         (0, 0),
-        (width, 140),
+        (width, 120),
         (255, 60, 60),
        -1
 )
@@ -148,7 +148,7 @@ def create_background():
     cv2.putText(
         image,
         "VISIQ AI NEWS",
-        (60, 120),
+        (50, 80),
         cv2.FONT_HERSHEY_SIMPLEX,
         2,
         (255, 255, 255),
@@ -238,12 +238,12 @@ def create_video(topic):
             font_size=60,
             color="white",
             bg_color="black",
-            size=(950, None),
+            size=(950, 250),
             method="caption"
         )
         .with_start(index * scene_duration)
         .with_duration(scene_duration)
-        .with_position(("center", 1500))
+        .with_position(("center", 1350))
     )
 
     clips.append(subtitle_bg)
@@ -279,7 +279,7 @@ def create_video(topic):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1750))
+        .with_position(("center", 1680))
     )
 
     # ==========================
