@@ -201,6 +201,7 @@ def create_video(topic):
                .resized(height=1450)
                .resized(
                    lambda t: 1 + 0.08 * t / scene_duration
+               )    
                 .with_start(index * scene_duration)
                 .with_duration(scene_duration)
                 .with_position(("center", 220))
