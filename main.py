@@ -139,8 +139,8 @@ def create_background():
 
     cv2.rectangle(
         image,
-        (0, 0),
-        (width, 120),
+        (0, 1740),
+        (width, 1920),
         (255, 60, 60),
        -1
 )
@@ -253,17 +253,17 @@ def create_video(topic):
     # ==========================
 
     headline = TextClip(
-        text=topic[:60],
-        font_size=55,
+        text=topic,
+        font_size=48,
         color="white",
-        size=(900, None),
+        size=(1000, 200),
         method="caption"
     )
 
     headline = (
         headline
         .with_duration(audio.duration)
-        .with_position(("center", 150))
+        .with_position(("center", 60))
     )
 
     # ==========================
@@ -279,7 +279,7 @@ def create_video(topic):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1350))
+        .with_position(("center", 1780))
     )
 
     # ==========================
