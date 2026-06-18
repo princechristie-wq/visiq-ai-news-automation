@@ -263,7 +263,7 @@ def create_video(topic):
     headline = (
         headline
         .with_duration(audio.duration)
-        .with_position(("center", 120))
+        .with_position(("center", 150))
     )
 
     # ==========================
@@ -279,7 +279,7 @@ def create_video(topic):
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1680))
+        .with_position(("center", 1350))
     )
 
     # ==========================
