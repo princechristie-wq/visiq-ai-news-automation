@@ -24,6 +24,56 @@ client = Groq(
 api_key=os.environ["GROQ_API_KEY"]
 )
 
+music_credits = {
+    "Music_1.mp3":
+"""Music: Robots and Aliens - Joel Cummins 01
+License: YouTube Audio Library""",
+
+    "Music_2.mp3":
+"""Music: Blue Moon - JVNA
+License: YouTube Audio Library""",
+
+    "Music_3.mp3":
+"""Music: Giving Up - JVNA
+License: YouTube Audio Library""",
+
+    "Music_4.mp3":
+"""Music: News Room News - Spence
+License: YouTube Audio Library""",
+
+    "Music_5.mp3":
+"""Music: Odd News - Twin Musicom
+Odd News by Twin Musicom is licensed under a Creative Commons Attribution 4.0 licence.
+https://creativecommons.org/licenses/by/4.0/
+
+Artist: http://www.twinmusicom.org/
+License: YouTube Audio Library""",
+
+    "Music_6.mp3":
+"""Music: News Theme 2 - Audionautix
+News Theme 2 by Audionautix is licensed under a Creative Commons Attribution 4.0 licence.
+https://creativecommons.org/licenses/by/4.0/
+
+Artist: http://audionautix.com/
+License: YouTube Audio Library""",
+
+    "Music_7.mp3":
+"""Music: News Theme 1 - Audionautix
+News Theme 1 by Audionautix is licensed under a Creative Commons Attribution 4.0 licence.
+https://creativecommons.org/licenses/by/4.0/
+
+Artist: http://audionautix.com/
+License: YouTube Audio Library""",
+
+    "Music_8.mp3":
+"""Music: Newsreel - Max Surla_Media Right Productions
+License: YouTube Audio Library""",
+
+    "Music_9.mp3":
+"""Music: Newsroom - Riot
+License: YouTube Audio Library"""
+}
+
 print("Starting...")
 async def create_voice(script):
 
