@@ -228,6 +228,7 @@ def create_video(topic):
 
 music_file = random.choice(music_files)
 selected_music = os.path.basename(music_file)
+music_credit = music_credits[selected_music]
 
 print("Selected Music:", selected_music)
 
@@ -463,6 +464,7 @@ metadata = metadata_response.choices[0].message.content.strip()
 title = ""
 description = ""
 hashtags = ""
+selected_music = ""
 
 for line in metadata.splitlines():
 
@@ -492,8 +494,16 @@ with open("script.txt", "w", encoding="utf-8") as f:
 with open("title.txt", "w", encoding="utf-8") as f:
     f.write(title)
 
+final_description = (
+    description
+    + "\n\n--------------------\n"
+    + "Music Credits\n"
+    + "--------------------\n"
+    + music_credit
+)
+
 with open("description.txt", "w", encoding="utf-8") as f:
-    f.write(description)
+    f.write(final_description)
 
 with open("hashtags.txt", "w", encoding="utf-8") as f:
     f.write(hashtags)
