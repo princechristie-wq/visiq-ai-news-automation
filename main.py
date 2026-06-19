@@ -200,7 +200,7 @@ def create_video(topic):
                 ImageClip(image_file)
                .resized(height=1450)
                .resized(
-                   lambda t: 1 + 0.08 * t / scene_duration
+                   lambda t: 1 + 0.12 * t / scene_duration
                )    
                 .with_start(index * scene_duration)
                 .with_duration(scene_duration)
@@ -284,9 +284,9 @@ messages=[
 {
 "role": "user",
 "content": """
-Give one trending AI news topic.
+Give the most important AI news from the last 24 hours.
 
-Return only the topic.
+Return only the headline.
 """
 }
 ]
