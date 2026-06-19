@@ -214,6 +214,23 @@ def create_video(topic):
 
     audio = AudioFileClip("voice.mp3")
 
+    music_files = [
+    "music/Music_1.mp3",
+    "music/Music_2.mp3",
+    "music/Music_3.mp3",
+    "music/Music_4.mp3",
+    "music/Music_5.mp3",
+    "music/Music_6.mp3",
+    "music/Music_7.mp3",
+    "music/Music_8.mp3",
+    "music/Music_9.mp3"
+]
+
+music_file = random.choice(music_files)
+selected_music = os.path.basename(music_file)
+
+print("Selected Music:", selected_music)
+
     create_background()
 
     background = (
