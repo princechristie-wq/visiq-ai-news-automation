@@ -139,7 +139,7 @@ def create_background():
 
     cv2.rectangle(
         image,
-        (0, 1740),
+        (0, 1640),
         (width, 1920),
         (255, 60, 60),
        -1
@@ -235,18 +235,18 @@ def create_video(topic):
     # BRAND
     # ==========================
 
-     brand = TextClip(
-         text="VISIQ AI",
-         font_size=70,
-         color="white",
-         size=(1080, 200),
-         method="caption"
+    brand = TextClip(
+        text="VISIQ AI",
+        font_size=55,
+        color="white",
+        size=(1080, 200),
+        method="caption"
     )
 
     brand = (
         brand
         .with_duration(audio.duration)
-        .with_position(("center", 1700))
+        .with_position(("center", 1760))
     )
 
     # ==========================
