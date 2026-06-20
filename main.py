@@ -368,8 +368,7 @@ def create_video(topic):
         size=(1080, 1920)
     )
 
-        final_video = final_video.with_audio(final_audio)
-    )
+    final_video = final_video.with_audio(final_audio)
 
     final_video.write_videofile(
         "final_video.mp4",
@@ -378,8 +377,7 @@ def create_video(topic):
         audio_codec="aac",
         preset="ultrafast",
         threads=2
-    )
-     
+    )     
 # =====================================
 
 # TOPIC
