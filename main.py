@@ -76,6 +76,20 @@ License: YouTube Audio Library"""
 }
 
 print("Starting...")
+
+import urllib.request
+
+for i in range(1, 10):
+
+    url = f"https://github.com/princechristie-wq/visiq-ai-news-automation/releases/download/Music-v1/Music_{i}.mp3"
+
+    urllib.request.urlretrieve(
+        url,
+        f"Music_{i}.mp3"
+    )
+
+    print(f"Downloaded Music_{i}.mp3")
+    
 async def create_voice(script):
 
     communicate = edge_tts.Communicate(
@@ -245,19 +259,6 @@ def create_video(topic):
     print("Files in repository:")
     print(os.listdir("."))
     print("Selected music:", music_file)
-    music = AudioFileClip(
-        music_file
-    )
-
-    music = (
-        music
-        .with_duration(audio.duration)
-        .with_volume_scaled(0.12)
-    )
-
-    final_audio = CompositeAudioClip(
-        [music, audio]
-    )
 
     create_background()
     background = (
