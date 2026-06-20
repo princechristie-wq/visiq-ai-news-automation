@@ -463,8 +463,9 @@ metadata = metadata_response.choices[0].message.content.strip()
 title = ""
 description = ""
 hashtags = ""
-selected_music = ""
 
+selected_music = "Music_1.mp3"
+music_credit = music_credits[selected_music]
 for line in metadata.splitlines():
 
     if line.startswith("TITLE:"):
