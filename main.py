@@ -226,25 +226,25 @@ def create_video(topic):
     "music/Music_9.mp3"
 ]
 
-music_file = random.choice(music_files)
-selected_music = os.path.basename(music_file)
-music_credit = music_credits[selected_music]
+    music_file = random.choice(music_files)
+    selected_music = os.path.basename(music_file)
+    music_credit = music_credits[selected_music]
 
-print("Selected Music:", selected_music)
+    print("Selected Music:", selected_music)
 
-create_background()
+    create_background()
 
-background = (
-    ImageClip("background.jpg")
-    .with_duration(audio.duration)
-)
+    background = (
+        ImageClip("background.jpg")
+        .with_duration(audio.duration)
+    )
 
-with open(
-    "scene_prompts.txt",
-    "r",
+    with open(
+        "scene_prompts.txt",
+        "r",
         encoding="utf-8"
- ) as f:
-     scenes = f.read().splitlines()
+    ) as f:
+        scenes = f.read().splitlines()
 
     print("Scenes loaded:", len(scenes))
 
@@ -255,7 +255,6 @@ with open(
         len(scenes),
         1
     )
-
     for index, scene in enumerate(scenes):
 
         image_file = f"image_{index + 1}.jpg"
