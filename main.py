@@ -341,7 +341,7 @@ def create_video(topic):
 
     caption_clips = []
 
-    chunk_size = 4
+    chunk_size = 1
 
     duration_per_word = audio.duration / max(
         len(words),
