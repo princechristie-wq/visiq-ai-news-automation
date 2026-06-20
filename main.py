@@ -14,6 +14,7 @@ moviepy.__version__)
 
 from moviepy import (
     AudioFileClip,
+    CompositeAudioClip,
     ImageClip,
     TextClip,
     CompositeVideoClip,
@@ -213,6 +214,17 @@ def create_background():
 def create_video(topic):
 
     audio = AudioFileClip("voice.mp3")
+    music = AudioFileClip(music_file)
+
+    music = (
+    music
+    .with_duration(audio.duration)
+    .with_volume_scaled(0.12)
+)
+
+final_audio = CompositeAudioClip(
+    [music, audio]
+)
 
     music_files = [
     "music/Music_1.mp3",
@@ -328,7 +340,7 @@ def create_video(topic):
         size=(1080, 1920)
     )
 
-    final_video = final_video.with_audio(audio)
+    final_video = final_video.with_audio(final_audio)
 
     final_video.write_videofile(
         "final_video.mp4",
