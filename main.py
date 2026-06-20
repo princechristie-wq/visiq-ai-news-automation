@@ -232,7 +232,7 @@ music_credit = music_credits[selected_music]
 
 print("Selected Music:", selected_music)
 
-    create_background()
+     create_background()
 
     background = (
         ImageClip("background.jpg")
