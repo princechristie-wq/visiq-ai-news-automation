@@ -337,7 +337,56 @@ def create_video(topic):
         .with_duration(audio.duration)
         .with_position(("center", 60))
     )
+    words = script.split()
 
+    caption_clips = []
+
+    chunk_size = 4
+
+    duration_per_word = audio.duration / max(
+        len(words),
+        1
+    )
+
+    for i in range(
+        0,
+        len(words),
+        chunk_size
+    ):
+
+        caption_text = " ".join(
+            words[i:i + chunk_size]
+        )
+
+        start_time = (
+            i * duration_per_word
+        )
+
+        clip_duration = (
+            len(words[i:i + chunk_size])
+            * duration_per_word
+        )
+
+        caption = TextClip(
+            text=caption_text,
+            font_size=70,
+            color="white",
+            stroke_color="black",
+            stroke_width=3,
+            size=(1000, 200),
+            method="caption"
+        )
+
+        caption = (
+            caption
+            .with_start(start_time)
+            .with_duration(clip_duration)
+            .with_position(("center", 1450))
+        )
+
+        caption_clips.append(
+            caption
+        )
     # ==========================
     # BRAND
     # ==========================
@@ -364,6 +413,7 @@ def create_video(topic):
         [background]
         + image_clips
         + [headline]
+        + caption_clips
         + [brand],
         size=(1080, 1920)
     )
