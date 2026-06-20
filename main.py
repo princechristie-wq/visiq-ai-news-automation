@@ -213,10 +213,9 @@ def create_background():
 
 def create_video(topic):
 
-    audio = AudioFileClip("voice.mp3")
-    music = AudioFileClip(music_file)
+music = AudioFileClip(music_file)
 
-    music = (
+music = (
     music
     .with_duration(audio.duration)
     .with_volume_scaled(0.12)
@@ -225,7 +224,6 @@ def create_video(topic):
 final_audio = CompositeAudioClip(
     [music, audio]
 )
-
     music_files = [
     "music/Music_1.mp3",
     "music/Music_2.mp3",
@@ -241,6 +239,17 @@ final_audio = CompositeAudioClip(
     music_file = random.choice(music_files)
     selected_music = os.path.basename(music_file)
     music_credit = music_credits[selected_music]
+    music = AudioFileClip(music_file)
+
+    music = (
+    music
+    .with_duration(audio.duration)
+    .with_volume_scaled(0.12)
+)
+
+final_audio = CompositeAudioClip(
+    [music, audio]
+)
 
     print("Selected Music:", selected_music)
 
