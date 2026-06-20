@@ -241,7 +241,10 @@ def create_video(topic):
         "Selected Music:",
         selected_music
     )
-
+    print("Current directory:", os.getcwd())
+    print("Files in repository:")
+    print(os.listdir("."))
+    print("Selected music:", music_file)
     music = AudioFileClip(
         music_file
     )
