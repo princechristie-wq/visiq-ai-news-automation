@@ -239,12 +239,12 @@ background = (
     .with_duration(audio.duration)
 )
 
-    with open(
-        "scene_prompts.txt",
-        "r",
+with open(
+    "scene_prompts.txt",
+    "r",
         encoding="utf-8"
-    ) as f:
-        scenes = f.read().splitlines()
+ ) as f:
+     scenes = f.read().splitlines()
 
     print("Scenes loaded:", len(scenes))
 
