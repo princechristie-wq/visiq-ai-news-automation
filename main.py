@@ -255,6 +255,19 @@ def create_video(topic):
         "Selected Music:",
         selected_music
     )
+    music = AudioFileClip(
+        music_file
+    )
+
+    music = (
+        music
+       .with_duration(audio.duration)
+       .with_volume_scaled(0.12)
+   )
+
+   final_audio = CompositeAudioClip(
+       [music, audio]
+  )
     print("Current directory:", os.getcwd())
     print("Files in repository:")
     print(os.listdir("."))
