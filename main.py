@@ -213,48 +213,50 @@ def create_background():
 
 def create_video(topic):
 
-music = AudioFileClip(music_file)
+    audio = AudioFileClip("voice.mp3")
 
-music = (
-    music
-    .with_duration(audio.duration)
-    .with_volume_scaled(0.12)
-)
-
-final_audio = CompositeAudioClip(
-    [music, audio]
-)
     music_files = [
-    "music/Music_1.mp3",
-    "music/Music_2.mp3",
-    "music/Music_3.mp3",
-    "music/Music_4.mp3",
-    "music/Music_5.mp3",
-    "music/Music_6.mp3",
-    "music/Music_7.mp3",
-    "music/Music_8.mp3",
-    "music/Music_9.mp3"
-]
+        "music/Music_1.mp3",
+        "music/Music_2.mp3",
+        "music/Music_3.mp3",
+        "music/Music_4.mp3",
+        "music/Music_5.mp3",
+        "music/Music_6.mp3",
+        "music/Music_7.mp3",
+        "music/Music_8.mp3",
+        "music/Music_9.mp3"
+    ]
 
     music_file = random.choice(music_files)
-    selected_music = os.path.basename(music_file)
-    music_credit = music_credits[selected_music]
-    music = AudioFileClip(music_file)
+
+    selected_music = os.path.basename(
+        music_file
+    )
+
+    music_credit = music_credits[
+        selected_music
+    ]
+
+    print(
+        "Selected Music:",
+        selected_music
+    )
+
+    music = AudioFileClip(
+        music_file
+    )
 
     music = (
-    music
-    .with_duration(audio.duration)
-    .with_volume_scaled(0.12)
-)
+        music
+        .with_duration(audio.duration)
+        .with_volume_scaled(0.12)
+    )
 
-final_audio = CompositeAudioClip(
-    [music, audio]
-)
-
-    print("Selected Music:", selected_music)
+    final_audio = CompositeAudioClip(
+        [music, audio]
+    )
 
     create_background()
-
     background = (
         ImageClip("background.jpg")
         .with_duration(audio.duration)
@@ -349,7 +351,9 @@ final_audio = CompositeAudioClip(
         size=(1080, 1920)
     )
 
-    final_video = final_video.with_audio(final_audio)
+    final_video = final_video.with_audio(
+    final_audio
+)
 
     final_video.write_videofile(
         "final_video.mp4",
