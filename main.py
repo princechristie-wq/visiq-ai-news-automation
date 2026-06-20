@@ -261,13 +261,13 @@ def create_video(topic):
 
     music = (
         music
-       .with_duration(audio.duration)
-       .with_volume_scaled(0.12)
-   )
+        .with_duration(audio.duration)
+        .with_volume_scaled(0.12)
+    )
 
-   final_audio = CompositeAudioClip(
-       [music, audio]
-  )
+    final_audio = CompositeAudioClip(
+        [music, audio]
+    )
     print("Current directory:", os.getcwd())
     print("Files in repository:")
     print(os.listdir("."))
@@ -368,9 +368,8 @@ def create_video(topic):
         size=(1080, 1920)
     )
 
-    final_video = final_video.with_audio(
-    final_audio
-)
+        final_video = final_video.with_audio(final_audio)
+    )
 
     final_video.write_videofile(
         "final_video.mp4",
