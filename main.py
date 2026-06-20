@@ -14,10 +14,10 @@ moviepy.__version__)
 
 from moviepy import (
     AudioFileClip,
-    CompositeAudioClip,
     ImageClip,
     TextClip,
     CompositeVideoClip,
+    CompositeAudioClip,
     ColorClip,
     concatenate_videoclips
 )
@@ -215,17 +215,17 @@ def create_video(topic):
 
     audio = AudioFileClip("voice.mp3")
 
- music_files = [
-    "Music_1.mp3",
-    "Music_2.mp3",
-    "Music_3.mp3",
-    "Music_4.mp3",
-    "Music_5.mp3",
-    "Music_6.mp3",
-    "Music_7.mp3",
-    "Music_8.mp3",
-    "Music_9.mp3"
-]
+    music_files = [
+        "Music_1.mp3",
+        "Music_2.mp3",
+        "Music_3.mp3",
+        "Music_4.mp3",
+        "Music_5.mp3",
+        "Music_6.mp3",
+        "Music_7.mp3",
+        "Music_8.mp3",
+        "Music_9.mp3"
+    ]
 
     music_file = random.choice(music_files)
 
