@@ -233,10 +233,10 @@ music_credit = music_credits[selected_music]
 print("Selected Music:", selected_music)
 
     create_background()
+
     background = (
-           ImageClip("background.jpg")
-           .with_duration(audio.duration)
-    
+        ImageClip("background.jpg")
+        .with_duration(audio.duration)
     )
 
     with open(
