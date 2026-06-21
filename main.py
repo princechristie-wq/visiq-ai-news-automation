@@ -438,6 +438,48 @@ def create_video(topic):
         preset="ultrafast",
         threads=2
     )     
+
+def upload_to_youtube():
+
+    creds = Credentials(
+        None,
+        refresh_token=os.environ["YOUTUBE_REFRESH_TOKEN"],
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=os.environ["YOUTUBE_CLIENT_ID"],
+        client_secret=os.environ["YOUTUBE_CLIENT_SECRET"]
+    )
+
+    youtube = build(
+        "youtube",
+        "v3",
+        credentials=creds
+    )
+
+    request = youtube.videos().insert(
+        part="snippet,status",
+        body={
+            "snippet": {
+                "title": title,
+                "description": final_description,
+                "tags": hashtags.split(),
+                "categoryId": "28"
+            },
+            "status": {
+                "privacyStatus": "private"
+            }
+        },
+        media_body=MediaFileUpload(
+            "final_video.mp4",
+            resumable=True
+        )
+    )
+
+    response = request.execute()
+
+    print(
+        "YOUTUBE VIDEO ID:",
+        response["id"]
+    )
 # =====================================
 
 # TOPIC
