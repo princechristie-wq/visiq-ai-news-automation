@@ -660,5 +660,8 @@ generate_images()
 
 create_video(topic)
 
+upload_to_youtube()
+
 print("VOICE CREATED")
+print("VIDEO UPLOADED")
 print("SUCCESS")
