@@ -476,12 +476,12 @@ TOPIC:
 
 Requirements:
 
-* 120 to 150 words
+* 220 to 260 words
 * Strong hook
 * Explain the news
 * Explain why it matters
 * End with:
-  Follow Visiq AI for daily AI news.
+  Subscribe Visiq AI for daily AI news.
 
 Return narration only.
 """
