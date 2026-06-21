@@ -19,7 +19,7 @@ from moviepy import (
     CompositeVideoClip,
     CompositeAudioClip,
     ColorClip,
-    concatenate_videoclips
+    concatenate_videoclips,
     afx
 )
 client = Groq(
