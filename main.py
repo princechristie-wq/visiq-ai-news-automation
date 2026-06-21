@@ -20,7 +20,10 @@ from moviepy import (
     CompositeAudioClip,
     ColorClip,
     concatenate_videoclips,
-    afx
+    afx,
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 )
 client = Groq(
 api_key=os.environ["GROQ_API_KEY"]
