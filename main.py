@@ -20,6 +20,7 @@ from moviepy import (
     CompositeAudioClip,
     ColorClip,
     concatenate_videoclips
+    afx
 )
 client = Groq(
 api_key=os.environ["GROQ_API_KEY"]
@@ -259,10 +260,16 @@ def create_video(topic):
         music_file
     )
 
-    music = (
-        music
-        .with_duration(audio.duration)
-        .with_volume_scaled(0.12)
+    music = music.with_effects(
+        [
+            afx.AudioLoop(
+                duration=audio.duration
+            )
+        ]
+    )
+
+    music = music.with_volume_scaled(
+    0.12
     )
 
     final_audio = CompositeAudioClip(
