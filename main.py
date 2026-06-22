@@ -720,6 +720,8 @@ asyncio.run(
 
 generate_images()
 
+create_thumbnail(topic)
+
 create_video(topic)
 
 upload_to_youtube()
