@@ -230,7 +230,67 @@ def create_background():
         "background.jpg",
         image
     )
+def create_thumbnail(topic):
 
+    width = 1280
+    height = 720
+
+    image = np.zeros(
+        (height, width, 3),
+        dtype=np.uint8
+    )
+
+    for y in range(height):
+
+        r = int(20 + (y / height) * 80)
+        g = int(20 + (y / height) * 40)
+        b = int(60 + (y / height) * 180)
+
+        image[y, :] = (b, g, r)
+
+    cv2.rectangle(
+        image,
+        (0, 560),
+        (1280, 720),
+        (255, 60, 60),
+        -1
+    )
+
+    cv2.putText(
+        image,
+        "VISIQ AI",
+        (40, 650),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        2,
+        (255, 255, 255),
+        4
+    )
+
+    headline = textwrap.fill(
+        topic.upper(),
+        width=18
+    )
+
+    y0 = 120
+
+    for line in headline.split("\n"):
+
+        cv2.putText(
+            image,
+            line,
+            (50, y0),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.6,
+            (255, 255, 255),
+            4
+        )
+
+        y0 += 80
+
+    cv2.imwrite(
+        "thumbnail.jpg",
+        image
+    )
 def create_video(topic):
 
     audio = AudioFileClip("voice.mp3")
