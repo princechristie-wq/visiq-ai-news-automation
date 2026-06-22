@@ -235,19 +235,34 @@ def create_thumbnail(topic):
     width = 1280
     height = 720
 
-    image = np.zeros(
-        (height, width, 3),
-        dtype=np.uint8
+    # Use first AI image as thumbnail background
+    image = cv2.imread("image_1.jpg")
+
+    image = cv2.resize(
+        image,
+        (width, height)
     )
 
-    for y in range(height):
+    # Dark overlay for text readability
+    overlay = image.copy()
 
-        r = int(20 + (y / height) * 80)
-        g = int(20 + (y / height) * 40)
-        b = int(60 + (y / height) * 180)
+    cv2.rectangle(
+        overlay,
+        (0, 0),
+        (width, height),
+        (0, 0, 0),
+        -1
+    )
 
-        image[y, :] = (b, g, r)
+    image = cv2.addWeighted(
+        overlay,
+        0.45,
+        image,
+        0.55,
+        0
+    )
 
+    # Bottom branding bar
     cv2.rectangle(
         image,
         (0, 560),
@@ -256,6 +271,7 @@ def create_thumbnail(topic):
         -1
     )
 
+    # Channel branding
     cv2.putText(
         image,
         "VISIQ AI",
@@ -266,12 +282,13 @@ def create_thumbnail(topic):
         4
     )
 
+    # Thumbnail headline
     headline = textwrap.fill(
-        topic.upper(),
-        width=18
+        "BREAKING AI NEWS",
+        width=15
     )
 
-    y0 = 120
+    y0 = 180
 
     for line in headline.split("\n"):
 
@@ -280,17 +297,19 @@ def create_thumbnail(topic):
             line,
             (50, y0),
             cv2.FONT_HERSHEY_SIMPLEX,
-            1.6,
+            2.2,
             (255, 255, 255),
-            4
+            5
         )
 
-        y0 += 80
+        y0 += 100
 
     cv2.imwrite(
         "thumbnail.jpg",
         image
     )
+
+    print("THUMBNAIL CREATED")
 def create_video(topic):
 
     audio = AudioFileClip("voice.mp3")
