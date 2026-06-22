@@ -52,4 +52,6 @@ jobs:
               image_10.jpg
               voice.mp3
               background.jpg
+              thumbnail.jpg
               final_video.mp4
+              
