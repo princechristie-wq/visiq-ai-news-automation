@@ -3,6 +3,11 @@ name: Visiq AI Automation
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: '0 1 * * *'
+    - cron: '0 13 * * *'
+    - cron: '0 17 * * *'
+    - cron: '0 21 * * *'
 jobs:
   generate-content:
     runs-on: ubuntu-latest
