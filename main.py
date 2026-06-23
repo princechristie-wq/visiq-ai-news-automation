@@ -563,6 +563,17 @@ def upload_to_youtube():
         "YOUTUBE VIDEO ID:",
         response["id"]
     )
+
+    youtube.thumbnails().set(
+        videoId=response["id"],
+        media_body=MediaFileUpload(
+            "thumbnail.jpg"
+        )
+    ).execute()
+
+    print(
+        "THUMBNAIL UPLOADED"
+    )
 # =====================================
 
 # TOPIC
