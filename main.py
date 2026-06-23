@@ -232,8 +232,8 @@ def create_background():
     )
 def create_thumbnail(topic):
 
-    width = 1280
-    height = 720
+    width = 1080
+    height = 1920
 
     # Use first AI image as thumbnail background
     image = cv2.imread("image_1.jpg")
@@ -432,7 +432,7 @@ def create_video(topic):
 
     caption_clips = []
 
-    chunk_size = 4
+    chunk_size = 3
 
     duration_per_word = (
         audio.duration * 0.95
