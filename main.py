@@ -564,16 +564,6 @@ def upload_to_youtube():
         response["id"]
     )
 
-    youtube.thumbnails().set(
-        videoId=response["id"],
-        media_body=MediaFileUpload(
-            "thumbnail.jpg"
-        )
-    ).execute()
-
-    print(
-        "THUMBNAIL UPLOADED"
-    )
 # =====================================
 
 # TOPIC
@@ -751,8 +741,6 @@ asyncio.run(
 )
 
 generate_images()
-
-create_thumbnail(topic)
 
 create_video(topic)
 
