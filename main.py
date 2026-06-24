@@ -686,6 +686,11 @@ Technology conference unveiling a new AI system, cinematic photography
 
 Return only the prompts.
 """
+        }
+    ]
+)
+
+scene_prompts = scene_response.choices[0].message.content.strip()
 # =====================================
 
 # METADATA
