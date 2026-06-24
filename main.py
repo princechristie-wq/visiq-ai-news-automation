@@ -619,34 +619,45 @@ script_response = client.chat.completions.create(
         {
             "role": "user",
             "content": f"""
-You are a viral YouTube Shorts creator.
+You are a professional AI news presenter creating a YouTube Shorts narration.
 
 TOPIC:
 {topic}
 
-Create a Shorts narration.
-
 Requirements:
 
 - 180 to 220 words
-- First sentence must create curiosity
-- Use short punchy sentences
+- Strong hook in the first sentence
 - Sound energetic and conversational
-- Focus on what happened
-- Explain why people should care
+- Use short punchy sentences
+- Explain what happened
+- Explain why it matters
+- Focus on facts
 - Avoid corporate language
-- Avoid news article style
-- Every 2-3 sentences should introduce a new visual idea
-- End with:
-Subscribe to Visiq AI for daily AI news.
+- Avoid exaggerated claims
+- Avoid speculation
+- Avoid generic AI hype
+- Do NOT invent facts not contained in the topic
+- Do NOT include scene descriptions
+- Do NOT include visual instructions
+- Do NOT use parentheses
+- Do NOT write things like:
+  (Visuals of...)
+  (Scene showing...)
+  (Image of...)
+- Narration only
 
 Structure:
 
-Hook
-What happened
-Why it matters
-Future impact
-Call to action
+1. Hook
+2. What happened
+3. Why it matters
+4. Future impact
+5. Call to action
+
+End with exactly:
+
+Subscribe to Visiq AI for daily AI news.
 
 Return narration only.
 """
