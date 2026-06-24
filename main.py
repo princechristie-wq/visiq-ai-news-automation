@@ -576,31 +576,70 @@ topic_response = client.chat.completions.create(
         {
             "role": "user",
             "content": """
-You are a YouTube Shorts AI news editor.
+You are an expert YouTube Shorts creator.
 
-Find the most important AI news from the last 24 hours.
+Generate ONE viral AI news headline based on the most important AI development from the last 24 hours.
 
-Requirements:
-- Must be real AI news
-- Must be recent
-- Must be highly interesting
-- Must create curiosity
-- Maximum 12 words
-- Avoid corporate language
-- Avoid press release style
-- Suitable for viral YouTube Shorts
-- Return only the headline
+Rules:
 
-Examples:
+- 6 to 12 words only
+- Create curiosity
+- Create urgency
+- Sound like a YouTube Shorts title
+- No colons
+- No quotation marks
+- No corporate language
+- No clickbait that is false
+- Return headline only
 
-Google's New AI Search Changes Everything
+Good examples:
 
-OpenAI Just Released a Powerful New AI Agent
+Google Just Changed Search Forever
 
-Claude AI Beats GPT-5 In New Benchmark
+OpenAI Reveals Its Most Powerful AI Yet
 
-Nvidia's New AI Chip Is Shocking The Industry
+This New AI Tool Is Going Viral
+
+Claude AI Beats Expectations Again
+
+Nvidia's Latest AI Chip Breaks Records
 """
+Another Important Observation
+
+Your automation is asking:
+
+Give the most important AI news from the last 24 hours.
+
+But Groq models do not actually know the last 24 hours unless you're feeding them current news data.
+
+So many of your topics like:
+
+Google PaLM 2
+Google Bard
+
+are older topics.
+
+This is probably the biggest reason for low views.
+
+Future Upgrade Priority
+
+After we finish:
+
+✅ 4x/day automation
+✅ Email notification
+✅ Caption synchronization
+
+the next major upgrade should be:
+
+Real-time AI news retrieval
+→ RSS feeds
+→ News API
+→ Google News
+→ Reddit AI communities
+
+Then Groq writes scripts from actual current news instead of relying on model memory.
+
+That single change would likely improve topic freshness more than any banner, thumbnail, or logo change.
         }
     ]
 )
