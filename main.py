@@ -614,33 +614,47 @@ topic = topic_response.choices[0].message.content.strip()# =====================
 # =====================================
 
 script_response = client.chat.completions.create(
-model="llama-3.3-70b-versatile",
-messages=[
-{
-"role": "user",
-"content": f"""
-Write a YouTube Shorts narration.
+    model="llama-3.3-70b-versatile",
+    messages=[
+        {
+            "role": "user",
+            "content": f"""
+You are a viral YouTube Shorts creator.
 
 TOPIC:
 {topic}
 
+Create a Shorts narration.
+
 Requirements:
 
-* 220 to 260 words
-* Strong hook
-* Explain the news
-* Explain why it matters
-* End with:
-  Subscribe Visiq AI for daily AI news.
+- 180 to 220 words
+- First sentence must create curiosity
+- Use short punchy sentences
+- Sound energetic and conversational
+- Focus on what happened
+- Explain why people should care
+- Avoid corporate language
+- Avoid news article style
+- Every 2-3 sentences should introduce a new visual idea
+- End with:
+Subscribe to Visiq AI for daily AI news.
+
+Structure:
+
+Hook
+What happened
+Why it matters
+Future impact
+Call to action
 
 Return narration only.
 """
-}
-]
+        }
+    ]
 )
 
 script = script_response.choices[0].message.content.strip()
-
 # =====================================
 # SCENE PROMPTS
 # =====================================
