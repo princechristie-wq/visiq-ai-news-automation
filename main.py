@@ -662,21 +662,30 @@ SCRIPT:
 Create exactly 10 image prompts.
 
 Requirements:
-- AI related
-- Futuristic
-- Cinematic
-- Suitable for YouTube Shorts
-- One prompt per line
-- No numbering
+
+- Each prompt must represent a specific scene from the story.
+- Images must directly support the narration.
+- Use realistic photography style.
+- Avoid robots, floating brains, circuit boards and generic AI artwork.
+- Show people, researchers, offices, technology demonstrations, presentations, data centers and real-world AI use cases.
+- Highly detailed.
+- Cinematic lighting.
+- Professional photography.
+- Vertical Shorts friendly.
+- One prompt per line.
+- No numbering.
+- No quotation marks.
+
+Example style:
+
+Meta AI research team presenting breakthrough technology, realistic photography, professional lighting
+
+Scientists comparing human learning and AI learning on large digital displays, realistic technology laboratory
+
+Technology conference unveiling a new AI system, cinematic photography
 
 Return only the prompts.
 """
-        }
-    ]
-)
-
-scene_prompts = scene_response.choices[0].message.content.strip()
-
 # =====================================
 
 # METADATA
