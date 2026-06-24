@@ -578,10 +578,9 @@ topic_response = client.chat.completions.create(
             "content": """
 You are an expert YouTube Shorts creator.
 
-Generate ONE viral AI news headline based on the most important AI development from the last 24 hours.
+Generate ONE viral AI news headline.
 
 Rules:
-
 - 6 to 12 words only
 - Create curiosity
 - Create urgency
@@ -604,48 +603,11 @@ Claude AI Beats Expectations Again
 
 Nvidia's Latest AI Chip Breaks Records
 """
-Another Important Observation
-
-Your automation is asking:
-
-Give the most important AI news from the last 24 hours.
-
-But Groq models do not actually know the last 24 hours unless you're feeding them current news data.
-
-So many of your topics like:
-
-Google PaLM 2
-Google Bard
-
-are older topics.
-
-This is probably the biggest reason for low views.
-
-Future Upgrade Priority
-
-After we finish:
-
-✅ 4x/day automation
-✅ Email notification
-✅ Caption synchronization
-
-the next major upgrade should be:
-
-Real-time AI news retrieval
-→ RSS feeds
-→ News API
-→ Google News
-→ Reddit AI communities
-
-Then Groq writes scripts from actual current news instead of relying on model memory.
-
-That single change would likely improve topic freshness more than any banner, thumbnail, or logo change.
         }
     ]
 )
 
-topic = topic_response.choices[0].message.content.strip()
-# =====================================
+topic = topic_response.choices[0].message.content.strip()# =====================================
 
 # SCRIPT
 
