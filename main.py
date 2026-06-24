@@ -571,21 +571,41 @@ def upload_to_youtube():
 # =====================================
 
 topic_response = client.chat.completions.create(
-model="llama-3.3-70b-versatile",
-messages=[
-{
-"role": "user",
-"content": """
-Give the most important AI news from the last 24 hours.
+    model="llama-3.3-70b-versatile",
+    messages=[
+        {
+            "role": "user",
+            "content": """
+You are a YouTube Shorts AI news editor.
 
-Return only the headline.
+Find the most important AI news from the last 24 hours.
+
+Requirements:
+- Must be real AI news
+- Must be recent
+- Must be highly interesting
+- Must create curiosity
+- Maximum 12 words
+- Avoid corporate language
+- Avoid press release style
+- Suitable for viral YouTube Shorts
+- Return only the headline
+
+Examples:
+
+Google's New AI Search Changes Everything
+
+OpenAI Just Released a Powerful New AI Agent
+
+Claude AI Beats GPT-5 In New Benchmark
+
+Nvidia's New AI Chip Is Shocking The Industry
 """
-}
-]
+        }
+    ]
 )
 
 topic = topic_response.choices[0].message.content.strip()
-
 # =====================================
 
 # SCRIPT
