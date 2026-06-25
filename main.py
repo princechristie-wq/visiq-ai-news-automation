@@ -681,7 +681,7 @@ scene_response = client.chat.completions.create(
         {
             "role": "user",
             "content": f"""
-You are creating visuals for a YouTube AI News Short.
+You are an award-winning Hollywood storyboard artist creating visuals for a YouTube Shorts AI news channel.
 
 TOPIC:
 {topic}
@@ -691,30 +691,53 @@ SCRIPT:
 
 Create exactly 10 image prompts.
 
-Requirements:
+VISUAL STYLE:
 
-- Each prompt must represent a specific scene from the story.
-- Images must directly support the narration.
-- Use realistic photography style.
-- Avoid robots, floating brains, circuit boards and generic AI artwork.
-- Show people, researchers, offices, technology demonstrations, presentations, data centers and real-world AI use cases.
-- Highly detailed.
-- Cinematic lighting.
+Visiq AI uses a futuristic premium technology style.
+
+Generate scenes using ONLY these themes:
+
+• AI supercomputers
+• Advanced server rooms
+• Holographic user interfaces
+• Neural network visualizations
+• AI processors and microchips
+• Robotics laboratories
+• Data centers
+• Futuristic control rooms
+• Digital cities
+• Cybersecurity operations
+• Satellite technology
+• Quantum computing
+• AI healthcare technology
+• Autonomous vehicles
+• Space technology
+
+RULES:
+
+- Every image must look like a movie scene.
+- Every image must be different.
+- Strong cinematic lighting.
+- Dark blue futuristic color palette.
+- Ultra realistic.
+- Photorealistic.
+- 8K.
+- HDR.
+- Sharp focus.
+- High contrast.
+- Vertical composition.
 - Professional photography.
-- Vertical Shorts friendly.
-- One prompt per line.
-- No numbering.
-- No quotation marks.
+- Show people ONLY if absolutely necessary.
+- Maximum two people in one image.
+- Never generate classrooms.
+- Never generate meeting rooms.
+- Never generate generic offices.
+- Never generate business presentations.
+- Never generate stock-photo style scenes.
+- Never generate blurry faces.
+- Never generate text inside images.
 
-Example style:
-
-Meta AI research team presenting breakthrough technology, realistic photography, professional lighting
-
-Scientists comparing human learning and AI learning on large digital displays, realistic technology laboratory
-
-Technology conference unveiling a new AI system, cinematic photography
-
-Return only the prompts.
+Return only the 10 prompts.
 """
         }
     ]
