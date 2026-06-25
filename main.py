@@ -607,7 +607,8 @@ Nvidia's Latest AI Chip Breaks Records
     ]
 )
 
-topic = topic_response.choices[0].message.content.strip()# =====================================
+topic = topic_response.choices[0].message.content.strip()
+# =====================================
 
 # SCRIPT
 
