@@ -119,20 +119,20 @@ def generate_images():
 
         print(f"Generating image {i}")
 
-quality_prompt = (
-    "masterpiece, best quality, ultra detailed, "
-    "photorealistic, cinematic lighting, "
-    "professional photography, sharp focus, "
-    "8k, HDR, realistic textures, "
-    "high contrast, dramatic lighting, "
-    "award winning photography, "
-    + prompt
-)
+        quality_prompt = (
+            "masterpiece, best quality, ultra detailed, "
+            "photorealistic, cinematic lighting, "
+            "professional photography, sharp focus, "
+            "8k, HDR, realistic textures, "
+            "high contrast, dramatic lighting, "
+            "award winning photography, "
+            + prompt
+        )
 
-url = (
-    "https://image.pollinations.ai/prompt/"
-    + requests.utils.quote(quality_prompt)
-)
+        url = (
+            "https://image.pollinations.ai/prompt/"
+            + requests.utils.quote(quality_prompt)
+        )       
         response = requests.get(
             url,
             timeout=120,
