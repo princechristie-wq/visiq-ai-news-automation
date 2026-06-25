@@ -619,43 +619,43 @@ script_response = client.chat.completions.create(
     messages=[
         {
             "role": "user",
-"content": f"""
-You are a cinematic storyboard artist creating visuals for a YouTube Shorts AI news video.
+            "content": f"""
+You are a professional AI news presenter creating a YouTube Shorts narration.
 
 TOPIC:
 {topic}
 
-SCRIPT:
-{script}
+Requirements:
 
-Create exactly 10 image prompts.
+- 180 to 220 words
+- Strong hook in the first sentence
+- Sound energetic and conversational
+- Use short punchy sentences
+- Explain what happened
+- Explain why it matters
+- Focus on facts
+- Avoid corporate language
+- Avoid exaggerated claims
+- Avoid speculation
+- Do NOT invent facts
+- Do NOT include scene descriptions
+- Do NOT include visual instructions
+- Do NOT use parentheses
+- Narration only
 
-Rules:
+Structure:
 
-- Each prompt must represent a different scene from the story.
-- Use realistic technology environments.
-- Use photorealistic style.
-- Highly detailed.
-- Ultra sharp focus.
-- Professional cinematic lighting.
-- 8K quality.
-- Vertical composition for YouTube Shorts.
-- Keep a consistent blue and black technology theme.
-- Show AI servers, holographic interfaces, futuristic control rooms, neural network visualizations, advanced robotics, AI hardware, data centers and digital technology.
-- Only include people when absolutely necessary.
-- If people are included, show only one or two people with clear realistic faces.
-- Avoid crowds.
-- Avoid cartoon style.
-- Avoid painting style.
-- Avoid illustration style.
-- Avoid blurry faces.
-- Avoid distorted hands.
-- Avoid text inside images.
-- Avoid logos inside images.
-- Every prompt must be visually different.
-- One prompt per line.
-- No numbering.
-- Return only the prompts.
+1. Hook
+2. What happened
+3. Why it matters
+4. Future impact
+5. Call to action
+
+End with exactly:
+
+Subscribe to Visiq AI for daily AI news.
+
+Return narration only.
 """
         }
     ]
