@@ -681,7 +681,7 @@ scene_response = client.chat.completions.create(
         {
             "role": "user",
             "content": f"""
-You are an award-winning Hollywood storyboard artist creating visuals for a YouTube Shorts AI news channel.
+You are the Creative Director for the YouTube channel "Visiq AI".
 
 TOPIC:
 {topic}
@@ -691,34 +691,17 @@ SCRIPT:
 
 Create exactly 10 image prompts.
 
-VISUAL STYLE:
+IMPORTANT:
 
-Visiq AI uses a futuristic premium technology style.
+Prompt 1 MUST be the HERO IMAGE.
 
-Generate scenes using ONLY these themes:
+The Hero Image should:
 
-• AI supercomputers
-• Advanced server rooms
-• Holographic user interfaces
-• Neural network visualizations
-• AI processors and microchips
-• Robotics laboratories
-• Data centers
-• Futuristic control rooms
-• Digital cities
-• Cybersecurity operations
-• Satellite technology
-• Quantum computing
-• AI healthcare technology
-• Autonomous vehicles
-• Space technology
-
-RULES:
-
-- Every image must look like a movie scene.
-- Every image must be different.
-- Strong cinematic lighting.
-- Dark blue futuristic color palette.
+- Instantly grab attention.
+- Look like a premium YouTube thumbnail.
+- Be cinematic.
+- Have one strong focal point.
+- Have dramatic blue lighting.
 - Ultra realistic.
 - Photorealistic.
 - 8K.
@@ -726,16 +709,53 @@ RULES:
 - Sharp focus.
 - High contrast.
 - Vertical composition.
+- Premium movie quality.
+- NO people unless absolutely necessary.
+- NO text.
+- NO logos.
+- NO watermarks.
+
+Examples of Hero Images:
+
+- Massive glowing AI processor
+- Futuristic supercomputer
+- Holographic AI brain made from light
+- Quantum computer core
+- AI control room
+- Giant neural network visualization
+- AI data center stretching into darkness
+
+Prompts 2-10 should tell the story using scenes such as:
+
+- Server rooms
+- Robotics laboratories
+- Quantum computing
+- AI healthcare
+- Autonomous vehicles
+- Cybersecurity
+- Satellite technology
+- Neural networks
+- AI processors
+- Digital cities
+- Futuristic technology
+
+Rules:
+
+- Every prompt must be different.
+- Every prompt must look like a Hollywood movie.
+- Ultra realistic.
 - Professional photography.
-- Show people ONLY if absolutely necessary.
-- Maximum two people in one image.
-- Never generate classrooms.
-- Never generate meeting rooms.
-- Never generate generic offices.
-- Never generate business presentations.
-- Never generate stock-photo style scenes.
-- Never generate blurry faces.
-- Never generate text inside images.
+- Cinematic lighting.
+- Dark blue futuristic color palette.
+- High detail.
+- Sharp focus.
+- Vertical composition.
+- Avoid classrooms.
+- Avoid meeting rooms.
+- Avoid office workers.
+- Avoid business presentations.
+- Avoid blurry faces.
+- Avoid distorted hands.
 
 Return only the 10 prompts.
 """
