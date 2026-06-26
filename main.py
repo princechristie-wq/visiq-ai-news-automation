@@ -681,7 +681,7 @@ scene_response = client.chat.completions.create(
         {
             "role": "user",
             "content": f"""
-You are a Hollywood storyboard artist creating visuals for a YouTube Shorts AI news video.
+You are a professional AI image prompt engineer.
 
 TOPIC:
 {topic}
@@ -689,76 +689,56 @@ TOPIC:
 SCRIPT:
 {script}
 
-Create exactly 10 image prompts.
-
-Your job is to VISUALIZE THE STORY.
-
-Do NOT create generic AI images.
-
-Each prompt must represent what is happening in that part of the narration.
-
-Example:
-
-If the narration talks about:
-
-• Meta
-→ Show Meta AI research campus, engineers, AI laboratories, Meta-inspired technology.
-
-If it talks about:
-
-• Google
-→ Google-style AI research labs, cloud infrastructure, data centers, search technology.
-
-If it talks about:
-
-• Nvidia
-→ AI chips, GPU manufacturing, supercomputers, semiconductor facilities.
-
-If it talks about:
-
-• Tesla
-→ Autonomous vehicles, robotics, AI factories.
-
-If it talks about:
-
-• Healthcare
-→ AI-assisted diagnosis, medical imaging, modern hospitals.
-
-If it talks about:
-
-• Cybersecurity
-→ SOC rooms, hackers, monitoring systems.
-
-If it talks about:
-
-• Space
-→ Satellites, launch facilities, mission control.
+Your task is to carefully read the script and create exactly 10 professional image generation prompts.
 
 Rules:
 
-- Prompt 1 must be the Hero Image.
-- Prompts 2–10 must follow the story chronologically.
-- Every prompt must be completely different.
-- Never repeat the same environment.
-- Never repeat the same subject.
-- Never repeat AI chips more than once.
-- Never repeat server rooms more than once.
-- Never repeat robotics more than once.
-- Never repeat neural network graphics more than once.
-- If the script mentions a company, make the visuals reflect that company’s technology and environment.
-- If the script changes topic, the visuals must also change.
-- Ultra realistic.
-- Photorealistic.
-- Cinematic lighting.
-- 8K.
-- HDR.
-- Sharp focus.
-- Vertical composition.
-- Professional photography.
-- Blue futuristic color grading.
-- No text.
-- No watermarks.
-- No logos.
+- Every prompt must represent a different part of the story.
+- The visuals must naturally follow the narration.
+- Every prompt must be unique.
+- Every prompt must look completely different from the previous one.
+- If the narration changes, the visual must also change.
+- Focus on storytelling instead of generic AI artwork.
+
+Write prompts as if they are for a world-class AI image generation model.
+
+Each prompt should include:
+
+- Main subject
+- Environment
+- Camera angle
+- Composition
+- Lighting
+- Mood
+- Colors
+- Realistic details
+- Cinematic atmosphere
+- Professional photography style
+
+Image quality requirements:
+
+- Ultra realistic
+- Photorealistic
+- Extremely detailed
+- Cinematic lighting
+- HDR
+- 8K
+- Sharp focus
+- Depth of field
+- Professional color grading
+- Vertical composition for YouTube Shorts
+
+Avoid:
+
+- Text
+- Watermarks
+- Logos
+- Cartoon style
+- Painting style
+- CGI style
+- Low quality
+- Blurry faces
+- Distorted hands
 
 Return only the 10 prompts.
 """
