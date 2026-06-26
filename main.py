@@ -116,6 +116,11 @@ def generate_images():
     print(f"Found {len(prompts)} prompts")
 
     for i, prompt in enumerate(prompts, start=1):
+        
+        print("=" * 80)
+        print(f"IMAGE {i}")
+        print(prompt)
+        print("=" * 80)
 
         print(f"Generating image {i}")
 
@@ -128,10 +133,15 @@ def generate_images():
             "award winning photography, "
             + prompt
         )
+        
+        import random
+        
+        seed = random.randint(1, 999999999)
 
         url = (
             "https://image.pollinations.ai/prompt/"
-            + requests.utils.quote(quality_prompt)
+            + requests.utils.quote(prompt)
+            + f"?model=flux&seed={seed}&width=768&height=1344&nologo=true"
         )       
         response = requests.get(
             url,
