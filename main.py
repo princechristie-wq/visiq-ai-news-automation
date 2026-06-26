@@ -681,7 +681,7 @@ scene_response = client.chat.completions.create(
         {
             "role": "user",
             "content": f"""
-You are the Creative Director for the YouTube channel "Visiq AI".
+You are a Hollywood storyboard artist creating visuals for a YouTube Shorts AI news video.
 
 TOPIC:
 {topic}
@@ -691,71 +691,74 @@ SCRIPT:
 
 Create exactly 10 image prompts.
 
-IMPORTANT:
+Your job is to VISUALIZE THE STORY.
 
-Prompt 1 MUST be the HERO IMAGE.
+Do NOT create generic AI images.
 
-The Hero Image should:
+Each prompt must represent what is happening in that part of the narration.
 
-- Instantly grab attention.
-- Look like a premium YouTube thumbnail.
-- Be cinematic.
-- Have one strong focal point.
-- Have dramatic blue lighting.
-- Ultra realistic.
-- Photorealistic.
-- 8K.
-- HDR.
-- Sharp focus.
-- High contrast.
-- Vertical composition.
-- Premium movie quality.
-- NO people unless absolutely necessary.
-- NO text.
-- NO logos.
-- NO watermarks.
+Example:
 
-Examples of Hero Images:
+If the narration talks about:
 
-- Massive glowing AI processor
-- Futuristic supercomputer
-- Holographic AI brain made from light
-- Quantum computer core
-- AI control room
-- Giant neural network visualization
-- AI data center stretching into darkness
+• Meta
+→ Show Meta AI research campus, engineers, AI laboratories, Meta-inspired technology.
 
-Prompts 2-10 should tell the story using scenes such as:
+If it talks about:
 
-- Server rooms
-- Robotics laboratories
-- Quantum computing
-- AI healthcare
-- Autonomous vehicles
-- Cybersecurity
-- Satellite technology
-- Neural networks
-- AI processors
-- Digital cities
-- Futuristic technology
+• Google
+→ Google-style AI research labs, cloud infrastructure, data centers, search technology.
+
+If it talks about:
+
+• Nvidia
+→ AI chips, GPU manufacturing, supercomputers, semiconductor facilities.
+
+If it talks about:
+
+• Tesla
+→ Autonomous vehicles, robotics, AI factories.
+
+If it talks about:
+
+• Healthcare
+→ AI-assisted diagnosis, medical imaging, modern hospitals.
+
+If it talks about:
+
+• Cybersecurity
+→ SOC rooms, hackers, monitoring systems.
+
+If it talks about:
+
+• Space
+→ Satellites, launch facilities, mission control.
 
 Rules:
 
-- Every prompt must be different.
-- Every prompt must look like a Hollywood movie.
+- Prompt 1 must be the Hero Image.
+- Prompts 2–10 must follow the story chronologically.
+- Every prompt must be completely different.
+- Never repeat the same environment.
+- Never repeat the same subject.
+- Never repeat AI chips more than once.
+- Never repeat server rooms more than once.
+- Never repeat robotics more than once.
+- Never repeat neural network graphics more than once.
+- If the script mentions a company, make the visuals reflect that company’s technology and environment.
+- If the script changes topic, the visuals must also change.
 - Ultra realistic.
-- Professional photography.
+- Photorealistic.
 - Cinematic lighting.
-- Dark blue futuristic color palette.
-- High detail.
+- 8K.
+- HDR.
 - Sharp focus.
 - Vertical composition.
-- Avoid classrooms.
-- Avoid meeting rooms.
-- Avoid office workers.
-- Avoid business presentations.
-- Avoid blurry faces.
-- Avoid distorted hands.
+- Professional photography.
+- Blue futuristic color grading.
+- No text.
+- No watermarks.
+- No logos.
 
 Return only the 10 prompts.
 """
