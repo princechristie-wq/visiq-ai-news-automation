@@ -681,7 +681,7 @@ scene_response = client.chat.completions.create(
         {
             "role": "user",
             "content": f"""
-You are a professional AI image prompt engineer.
+You are one of the world's best AI Image Prompt Engineers.
 
 TOPIC:
 {topic}
@@ -689,58 +689,163 @@ TOPIC:
 SCRIPT:
 {script}
 
-Your task is to carefully read the script and create exactly 10 professional image generation prompts.
+Read the script carefully.
 
-Rules:
+Create EXACTLY 10 image prompts that tell the story from beginning to end.
 
-- Every prompt must represent a different part of the story.
-- The visuals must naturally follow the narration.
-- Every prompt must be unique.
-- Every prompt must look completely different from the previous one.
-- If the narration changes, the visual must also change.
-- Focus on storytelling instead of generic AI artwork.
+Each prompt should represent ONE different part of the narration.
 
-Write prompts as if they are for a world-class AI image generation model.
+----------------------------------------
+VISUAL STYLE
+----------------------------------------
 
-Each prompt should include:
+Every image must look like a premium documentary about Artificial Intelligence.
 
-- Main subject
-- Environment
-- Camera angle
-- Composition
-- Lighting
-- Mood
-- Colors
-- Realistic details
-- Cinematic atmosphere
-- Professional photography style
+Ultra realistic.
+Photorealistic.
+Professional photography.
+8K.
+HDR.
+Sharp focus.
+Cinematic lighting.
+Depth of field.
+High detail.
+Vertical composition (9:16).
 
-Image quality requirements:
+----------------------------------------
+IMAGE PROMPT FORMAT
+----------------------------------------
 
-- Ultra realistic
-- Photorealistic
-- Extremely detailed
-- Cinematic lighting
-- HDR
-- 8K
-- Sharp focus
-- Depth of field
-- Professional color grading
-- Vertical composition for YouTube Shorts
+Every prompt must naturally include:
 
-Avoid:
+• Main subject
+• Environment
+• Camera angle
+• Lens style
+• Lighting
+• Mood
+• Composition
+• Colors
+• Fine details
 
-- Text
-- Watermarks
-- Logos
-- Cartoon style
-- Painting style
-- CGI style
-- Low quality
-- Blurry faces
-- Distorted hands
+Do NOT write labels like:
 
-Return only the 10 prompts.
+Main subject:
+Lighting:
+Mood:
+
+Instead write ONE natural professional image prompt.
+
+----------------------------------------
+ALWAYS PREFER
+----------------------------------------
+
+AI research laboratories
+
+GPU clusters
+
+Modern data centers
+
+Scientists working with advanced technology
+
+Semiconductor fabrication
+
+AI healthcare equipment
+
+Robotics laboratories
+
+Autonomous vehicles
+
+Mission control centers
+
+Satellite communication
+
+Cloud computing infrastructure
+
+Quantum computing
+
+Cybersecurity operations centers
+
+Advanced holographic interfaces
+
+High-tech industrial environments
+
+----------------------------------------
+AVOID COMPLETELY
+----------------------------------------
+
+Random close-up faces
+
+People looking directly into the camera
+
+Classrooms
+
+Meeting rooms
+
+Business presentations
+
+Office workers sitting around tables
+
+People celebrating
+
+City skyline at sunset
+
+Random landscapes
+
+Fantasy scenes
+
+Cartoon style
+
+Painting style
+
+Anime
+
+Text
+
+Watermarks
+
+Logos
+
+Low quality
+
+Blurry faces
+
+Distorted hands
+
+----------------------------------------
+VERY IMPORTANT
+----------------------------------------
+
+If the script mentions:
+
+Google → Generate Google-inspired AI research environments.
+
+Meta → Generate Meta-inspired AI laboratories.
+
+Microsoft → Generate enterprise AI cloud infrastructure.
+
+OpenAI → Generate advanced AI research facilities.
+
+NVIDIA → Generate GPU clusters, AI chips, semiconductor technology.
+
+Tesla → Generate autonomous driving, robotics and AI factories.
+
+Healthcare → Show real hospitals using AI.
+
+Finance → Show AI-powered financial technology.
+
+Education → Show AI-powered learning technology.
+
+Every image should clearly relate to that part of the narration.
+
+Every prompt must be visually different.
+
+Never repeat the same scene twice.
+
+The final image should conclude the story with a realistic AI technology scene.
+
+Return ONLY the 10 prompts.
+
 """
         }
     ]
