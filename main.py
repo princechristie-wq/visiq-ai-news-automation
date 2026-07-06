@@ -750,75 +750,99 @@ Instead write ONE natural professional image prompt.
 ALWAYS PREFER
 ----------------------------------------
 
-AI research laboratories
+AI processors
+
+Semiconductor chips
 
 GPU clusters
 
-Modern data centers
+Supercomputers
 
-Scientists working with advanced technology
+Data centers
 
-Semiconductor fabrication
+Quantum computing systems
 
-AI healthcare equipment
-
-Robotics laboratories
+Robotic manufacturing equipment
 
 Autonomous vehicles
 
-Mission control centers
+Satellite communication systems
 
-Satellite communication
+Cybersecurity operation centers
 
 Cloud computing infrastructure
 
-Quantum computing
+Industrial automation
 
-Cybersecurity operations centers
+AI hardware
 
-Advanced holographic interfaces
+Server infrastructure
 
-High-tech industrial environments
+Scientific instruments
+
+Holographic technology
+
+Digital twin systems
+
+Neural network visualization
+
+Advanced robotics
+
+AI control rooms
 
 ----------------------------------------
 AVOID COMPLETELY
 ----------------------------------------
 
-Random close-up faces
+Human faces
 
-People looking directly into the camera
+Portraits
+
+People looking at camera
+
+Scientists posing
+
+Office workers
+
+Business meetings
+
+Conference rooms
 
 Classrooms
 
-Meeting rooms
+Crowds
 
-Business presentations
-
-Office workers sitting around tables
+People shaking hands
 
 People celebrating
 
+Selfies
+
+Close-up faces
+
+Human emotions
+
+Random people
+
 City skyline at sunset
 
-Random landscapes
+Nature scenery
 
-Fantasy scenes
+Fantasy
 
-Cartoon style
+Cartoon
 
-Painting style
+Painting
 
 Anime
+
+Logos
 
 Text
 
 Watermarks
 
-Logos
-
-Low quality
-
-Blurry faces
+Blurry images
 
 Distorted hands
 
