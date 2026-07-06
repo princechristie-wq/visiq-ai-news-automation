@@ -709,19 +709,51 @@ Each prompt should represent ONE different part of the narration.
 VISUAL STYLE
 ----------------------------------------
 
-Every image must look like a premium documentary about Artificial Intelligence.
+Every image must look like a premium AI technology documentary.
 
 Ultra realistic.
+
 Photorealistic.
-Professional photography.
+
+Industrial technology photography.
+
+Technology documentary style.
+
+Engineering photography.
+
 8K.
+
 HDR.
+
 Sharp focus.
-Cinematic lighting.
-Depth of field.
+
 High detail.
+
+Depth of field.
+
+Cinematic lighting.
+
 Vertical composition (9:16).
 
+Technology is ALWAYS the main subject.
+
+No humans.
+
+No faces.
+
+No portraits.
+
+No people.
+
+No scientists.
+
+No engineers.
+
+No doctors.
+
+No researchers.
+
+Every image must focus ONLY on AI technology, infrastructure, hardware, robotics, servers, semiconductor equipment, industrial automation or futuristic digital systems.
 ----------------------------------------
 IMAGE PROMPT FORMAT
 ----------------------------------------
@@ -778,7 +810,7 @@ AI hardware
 
 Server infrastructure
 
-Scientific instruments
+Scientific laboratory equipment
 
 Holographic technology
 
@@ -786,7 +818,7 @@ Digital twin systems
 
 Neural network visualization
 
-Advanced robotics
+Industrial robotic systems
 
 AI control rooms
 
