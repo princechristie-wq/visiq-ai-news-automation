@@ -662,6 +662,36 @@ Requirements:
 - Do NOT use parentheses
 - Narration only
 
+IMPORTANT:
+
+- Focus on AI technology, not the people behind it.
+- Never use words like:
+  - scientist
+  - scientists
+  - researcher
+  - researchers
+  - engineer
+  - engineers
+  - doctor
+  - doctors
+  - developer
+  - developers
+  - team
+  - teams
+- Instead, describe:
+  - AI systems
+  - AI models
+  - GPU clusters
+  - Supercomputers
+  - Data centers
+  - Semiconductor technology
+  - AI infrastructure
+  - Cloud computing
+  - Robotics
+  - AI hardware
+  - Industrial automation
+- The narration should describe what the technology does, not who created it.
+
 Structure:
 
 1. Hook
