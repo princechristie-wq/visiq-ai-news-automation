@@ -137,6 +137,43 @@ def generate_images():
         import random
         
         seed = random.randint(1, 999999999)
+        negative_prompt = """
+        technology only,
+        AI hardware,
+        server racks,
+        GPU clusters,
+        data centers,
+        industrial robotics,
+        quantum computers,
+
+        NO humans,
+        NO human face,
+        NO portrait,
+        NO selfie,
+        NO person,
+        NO people,
+        NO scientist,
+        NO researcher,
+        NO engineer,
+        NO doctor,
+        NO eyes,
+        NO hands,
+        NO body,
+        NO office,
+        NO meeting,
+        NO classroom,
+        NO crowd,
+        NO text,
+        NO logo,
+        NO watermark,
+        NO illustration,
+        NO painting,
+        NO cartoon
+        """
+
+        prompt = prompt + ", " + negative_prompt
+        
+        
 
         url = (
             "https://image.pollinations.ai/prompt/"
