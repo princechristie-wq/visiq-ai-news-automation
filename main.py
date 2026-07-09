@@ -768,216 +768,67 @@ SCRIPT:
 
 Read the script carefully.
 
-Create EXACTLY 10 image prompts that tell the story from beginning to end.
-
-Each prompt should represent ONE different part of the narration.
-
-----------------------------------------
-VISUAL STYLE
-----------------------------------------
-
-Every image must look like a premium AI technology documentary.
-
-Ultra realistic.
-
-Photorealistic.
-
-Industrial technology photography.
-
-Technology documentary style.
-
-Engineering photography.
-
-8K.
-
-HDR.
-
-Sharp focus.
-
-High detail.
-
-Depth of field.
-
-Cinematic lighting.
-
-Vertical composition (9:16).
-
-Technology is ALWAYS the main subject.
-
-No humans.
-
-No faces.
-
-No portraits.
-
-No people.
-
-No scientists.
-
-No engineers.
-
-No doctors.
-
-No researchers.
-
-Every image must focus ONLY on AI technology, infrastructure, hardware, robotics, servers, semiconductor equipment, industrial automation or futuristic digital systems.
-----------------------------------------
-IMAGE PROMPT FORMAT
-----------------------------------------
-
-Every prompt must naturally include:
-
-• Main subject
-• Environment
-• Camera angle
-• Lens style
-• Lighting
-• Mood
-• Composition
-• Colors
-• Fine details
-
-Do NOT write labels like:
-
-Main subject:
-Lighting:
-Mood:
-
-Instead write ONE natural professional image prompt.
-
-----------------------------------------
-ALWAYS PREFER
-----------------------------------------
-
-AI processors
-
-Semiconductor chips
-
-GPU clusters
-
-Supercomputers
-
-Data centers
-
-Quantum computing systems
-
-Robotic manufacturing equipment
-
-Autonomous vehicles
-
-Satellite communication systems
-
-Cybersecurity operation centers
-
-Cloud computing infrastructure
-
-Industrial automation
-
-AI hardware
-
-Server infrastructure
-
-Scientific laboratory equipment
-
-Holographic technology
-
-Digital twin systems
-
-Neural network visualization
-
-Industrial robotic systems
-
-AI control rooms
-
-----------------------------------------
-AVOID COMPLETELY
-----------------------------------------
-
-Human faces
-
-Portraits
-
-People looking at camera
-
-Scientists posing
-
-Office workers
-
-Business meetings
-
-Conference rooms
-
-Classrooms
-
-Crowds
-
-People shaking hands
-
-People celebrating
-
-Selfies
-
-Close-up faces
-
-Human emotions
-
-Random people
-
-City skyline at sunset
-
-Nature scenery
-
-Fantasy
-
-Cartoon
-
-Painting
-
-Anime
-
-Logos
-
-Text
-
-Watermarks
-
-Blurry images
-
-Distorted hands
-
-----------------------------------------
-VERY IMPORTANT
-----------------------------------------
-
-If the script mentions:
-
-Google → Generate Google-inspired AI research environments.
-
-Meta → Generate Meta-inspired AI laboratories.
-
-Microsoft → Generate enterprise AI cloud infrastructure.
-
-OpenAI → Generate advanced AI research facilities.
-
-NVIDIA → Generate GPU clusters, AI chips, semiconductor technology.
-
-Tesla → Generate autonomous driving, robotics and AI factories.
-
-Healthcare → Show real hospitals using AI.
-
-Finance → Show AI-powered financial technology.
-
-Education → Show AI-powered learning technology.
-
-Every image should clearly relate to that part of the narration.
-
-Every prompt must be visually different.
-
-Never repeat the same scene twice.
-
-The final image should conclude the story with a realistic AI technology scene.
-
-Return ONLY the 10 prompts.
+Your task is NOT to illustrate people.
+
+Your task is to illustrate ONLY physical technology and environments.
+
+Generate exactly 10 image prompts.
+
+Each prompt MUST contain ONLY objects, machines or environments.
+
+Allowed subjects ONLY:
+
+- AI data centers
+- GPU server racks
+- Semiconductor fabrication machines
+- AI processors
+- Motherboards
+- Circuit boards
+- Fiber optic cables
+- Quantum computers
+- Cooling systems
+- Cloud infrastructure
+- Network switches
+- Server rooms
+- Robotic manufacturing arms
+- Factory automation equipment
+- Autonomous vehicles (no driver visible)
+- Satellites
+- Space communication equipment
+- Cybersecurity monitoring screens
+- Holographic dashboards
+- AI hardware
+- Laboratory equipment (empty)
+- Industrial machinery
+- Computer hardware
+- Digital infrastructure
+
+Forbidden subjects:
+
+- Humans
+- Human faces
+- Portraits
+- Eyes
+- Hands
+- Bodies
+- Scientists
+- Engineers
+- Researchers
+- Doctors
+- Office workers
+- Meetings
+- Conference rooms
+- Classrooms
+- Crowds
+- Human silhouettes
+- Human shadows
+- Human reflections
+
+Every prompt must describe ONLY technology.
+
+If a prompt contains a person, rewrite it until there are no people.
+
+Return only the 10 prompts.
 
 """
         }
