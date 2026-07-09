@@ -530,7 +530,7 @@ def create_video(topic):
             caption
             .with_start(start_time)
             .with_duration(clip_duration)
-            .with_position(("center", 1450))
+            .with_position(("center", 980))
         )
 
         caption_clips.append(
