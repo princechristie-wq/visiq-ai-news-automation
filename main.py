@@ -518,11 +518,12 @@ def create_video(topic):
 
         caption = TextClip(
             text=caption_text,
-            font_size=70,
+            font_size=95,
             color="white",
             stroke_color="black",
-            stroke_width=3,
-            size=(1000, 200),
+            border_color="yellow"
+            stroke_width=5,
+            size=(950, 250),
             method="caption"
         )
 
