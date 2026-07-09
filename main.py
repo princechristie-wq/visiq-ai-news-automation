@@ -803,6 +803,36 @@ Allowed subjects ONLY:
 - Computer hardware
 - Digital infrastructure
 
+IMPORTANT OBJECT-ONLY RULE
+
+Every generated image must show technology operating by itself.
+
+All facilities must be completely empty.
+
+Use words such as:
+
+- unmanned
+- autonomous
+- empty facility
+- no personnel visible
+- unattended
+- fully automated
+- machine-only
+- equipment-only
+- infrastructure only
+
+Never describe a place where a person could naturally appear.
+
+If a satellite is shown, show only the satellite and ground equipment.
+
+If a laboratory is shown, show only laboratory equipment.
+
+If a factory is shown, show only robotic machinery.
+
+If a control room is shown, show only monitors, servers and equipment.
+
+Every image must look like an empty high-tech facility.
+
 Forbidden subjects:
 
 - Humans
