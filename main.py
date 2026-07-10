@@ -520,7 +520,7 @@ def create_video(topic):
             text=caption_text,
             font_size=95,
             color="white",
-            stroke_color="yellow",
+            stroke_color="black",
             stroke_width=5,
             size=(950, 250),
             method="caption"
