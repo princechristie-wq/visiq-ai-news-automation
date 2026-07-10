@@ -171,13 +171,13 @@ def generate_images():
         NO cartoon
         """
 
-        prompt = prompt + ", " + negative_prompt
+        quality_prompt = quality_prompt + ", " + negative_prompt
         
         
 
         url = (
             "https://image.pollinations.ai/prompt/"
-            + requests.utils.quote(prompt)
+            + requests.utils.quote(quality_prompt)
             + f"?model=flux&seed={seed}&width=768&height=1344&nologo=true"
         )       
         response = requests.get(
@@ -595,16 +595,23 @@ def upload_to_youtube():
     )
 
     request = youtube.videos().insert(
-        part="snippet,status",
+        part="snippet,status,paidProductPlacementDetails",
         body={
             "snippet": {
                 "title": title,
                 "description": final_description,
                 "tags": hashtags.split(),
-                "categoryId": "28"
+                "categoryId": "28",
+                "defaultLanguage": "en",
+                "defaultAudioLanguage": "en"
             },
             "status": {
-                "privacyStatus": "private"
+                "privacyStatus": "public",
+                "selfDeclaredMadeForKids": False,
+                "containsSyntheticMedia": True
+            },
+            "paidProductPlacementDetails": {
+                "hasPaidProductPlacement": False
             }
         },
         media_body=MediaFileUpload(
@@ -953,6 +960,13 @@ asyncio.run(
 generate_images()
 
 create_video(topic)
+
+# Verify the video was created successfully
+if not os.path.exists("final_video.mp4"):
+    raise Exception("final_video.mp4 was not created.")
+
+if os.path.getsize("final_video.mp4") < 1000000:
+    raise Exception("Video generation failed. Upload cancelled.")
 
 upload_to_youtube()
 
