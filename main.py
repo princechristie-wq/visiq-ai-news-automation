@@ -581,6 +581,49 @@ def create_video(topic):
         threads=2
     )     
 
+def get_trending_ai_topic():
+
+    feeds = [
+
+        "https://news.google.com/rss/search?q=Artificial+Intelligence",
+        "https://news.google.com/rss/search?q=OpenAI",
+        "https://news.google.com/rss/search?q=Google+AI",
+        "https://news.google.com/rss/search?q=Meta+AI",
+        "https://news.google.com/rss/search?q=Nvidia+AI",
+        "https://news.google.com/rss/search?q=Anthropic",
+        "https://news.google.com/rss/search?q=Claude+AI",
+        "https://news.google.com/rss/search?q=Gemini+AI"
+
+    ]
+
+    stories = []
+
+    for url in feeds:
+
+        try:
+
+            feed = feedparser.parse(url)
+
+            for entry in feed.entries[:5]:
+
+                title = re.sub("<.*?>", "", entry.title)
+
+                stories.append(title)
+
+        except Exception:
+
+            pass
+
+    stories = list(dict.fromkeys(stories))
+
+    print("\nLATEST AI STORIES\n")
+
+    for i, story in enumerate(stories[:20], 1):
+
+        print(f"{i}. {story}")
+
+    return stories
+
 def upload_to_youtube():
 
     creds = Credentials(
