@@ -9,6 +9,9 @@ import cv2
 import requests
 import moviepy
 
+import feedparser
+import re
+
 print("MOVIEPY VERSION:", 
 moviepy.__version__)
 
