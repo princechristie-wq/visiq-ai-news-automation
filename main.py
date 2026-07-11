@@ -1089,6 +1089,8 @@ with open("hashtags.txt", "w", encoding="utf-8") as f:
 
 with open("scene_prompts.txt", "w", encoding="utf-8") as f:
     f.write(scene_prompts)
+    
+youtube_videos = get_youtube_trending_topics()
 
 asyncio.run(
     create_voice(script)
