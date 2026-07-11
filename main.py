@@ -8,9 +8,10 @@ import numpy as np
 import cv2
 import requests
 import moviepy
-
 import feedparser
 import re
+
+from datetime import datetime, timezone
 
 print("MOVIEPY VERSION:", 
 moviepy.__version__)
@@ -111,6 +112,96 @@ async def create_voice(script):
         "voice.mp3"
     )
 
+# =====================================
+# YOUTUBE TRENDING AI VIDEOS
+# =====================================
+
+def get_youtube_trending_topics():
+
+    print("=" * 80)
+    print("SEARCHING YOUTUBE FOR TRENDING AI VIDEOS...")
+    print("=" * 80)
+
+    API_KEY = os.environ["YOUTUBE_API_KEY"]
+
+    keywords = [
+        "AI",
+        "Artificial Intelligence",
+        "AI News",
+        "ChatGPT",
+        "OpenAI",
+        "GPT",
+        "Gemini AI",
+        "Google AI",
+        "Claude AI",
+        "Anthropic",
+        "Meta AI",
+        "Llama AI",
+        "NVIDIA AI",
+        "Microsoft Copilot",
+        "Perplexity AI",
+        "DeepSeek AI",
+        "Mistral AI",
+        "Grok AI",
+        "xAI",
+        "Sora AI",
+        "Runway AI",
+        "Midjourney",
+        "AI Agents",
+        "AI Automation",
+        "Machine Learning",
+        "Deep Learning",
+        "Humanoid Robot",
+        "Robotics",
+        "AI Chips",
+        "Semiconductor AI"
+    ]
+
+    videos = []
+
+    for keyword in keywords:
+
+        print(f"Searching: {keyword}")
+
+        url = (
+            "https://www.googleapis.com/youtube/v3/search"
+            "?part=snippet"
+            "&type=video"
+            "&maxResults=5"
+            "&order=date"
+            "&relevanceLanguage=en"
+            f"&q={requests.utils.quote(keyword)}"
+            f"&key={API_KEY}"
+        )
+
+        response = requests.get(url)
+
+        if response.status_code != 200:
+            print("Search failed:", response.text)
+            continue
+
+        data = response.json()
+
+        for item in data.get("items", []):
+
+            videos.append({
+                "title": item["snippet"]["title"],
+                "channel": item["snippet"]["channelTitle"],
+                "published": item["snippet"]["publishedAt"],
+                "videoId": item["id"]["videoId"]
+            })
+
+    print("\nLATEST AI VIDEOS\n")
+
+    for video in videos[:20]:
+
+        print("-" * 80)
+        print(video["title"])
+        print(video["channel"])
+        print(video["published"])
+        print(video["videoId"])
+
+    return videos
 
 def generate_images():
 
