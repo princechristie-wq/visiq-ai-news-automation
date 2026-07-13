@@ -168,7 +168,7 @@ def get_youtube_trending_topics():
             "?part=snippet"
             "&type=video"
             "&maxResults=5"
-            "&order=date"
+            "&order=relevance"
             "&relevanceLanguage=en"
             f"&q={requests.utils.quote(keyword)}"
             f"&key={API_KEY}"
