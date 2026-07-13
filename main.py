@@ -233,6 +233,12 @@ def get_video_statistics(video_ids):
 
     ids = ",".join(video_ids)
 
+    print("=" * 80)
+    print("VIDEO IDS")
+    print("=" * 80)
+    print(ids)
+    print("Total IDs:", len(video_ids))
+    
     url = (
         "https://www.googleapis.com/youtube/v3/videos"
         "?part=statistics,snippet"
