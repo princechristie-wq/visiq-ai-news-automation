@@ -191,17 +191,97 @@ def get_youtube_trending_topics():
                 "videoId": item["id"]["videoId"]
             })
 
-    print("\nLATEST AI VIDEOS\n")
+# =====================================
+# GET VIDEO STATISTICS
+# =====================================
 
-    for video in videos[:20]:
+video_ids = []
 
-        print("-" * 80)
-        print(video["title"])
-        print(video["channel"])
-        print(video["published"])
-        print(video["videoId"])
+for video in videos:
 
-    return videos
+    video_ids.append(video["videoId"])
+
+statistics = get_video_statistics(video_ids)
+
+print("\nLATEST AI VIDEOS\n")
+
+for video in videos[:20]:
+
+    stats = statistics.get(
+        video["videoId"],
+        {}
+    )
+
+    print("-" * 80)
+    print(video["title"])
+    print(video["channel"])
+    print(video["published"])
+    print("Views:", stats.get("views", 0))
+    print("Likes:", stats.get("likes", 0))
+    print("Comments:", stats.get("comments", 0))
+
+return videos
+# =====================================
+# GET VIDEO STATISTICS
+# =====================================
+
+def get_video_statistics(video_ids):
+
+    API_KEY = os.environ["YOUTUBE_API_KEY"]
+
+    ids = ",".join(video_ids)
+
+    url = (
+        "https://www.googleapis.com/youtube/v3/videos"
+        "?part=statistics,snippet"
+        f"&id={ids}"
+        f"&key={API_KEY}"
+    )
+
+    response = requests.get(
+        url,
+        timeout=30
+    )
+
+    if response.status_code != 200:
+
+        print("Statistics API Error")
+        print(response.text)
+
+        return {}
+
+    data = response.json()
+
+    stats = {}
+
+    for item in data.get("items", []):
+
+        stats[item["id"]] = {
+
+            "views": int(
+                item["statistics"].get(
+                    "viewCount",
+                    0
+                )
+            ),
+
+            "likes": int(
+                item["statistics"].get(
+                    "likeCount",
+                    0
+                )
+            ),
+
+            "comments": int(
+                item["statistics"].get(
+                    "commentCount",
+                    0
+                )
+            )
+
+        }
+
+    return stats
 
 def generate_images():
 
@@ -228,8 +308,7 @@ def generate_images():
             + prompt
         )
         
-        import random
-        
+               
         seed = random.randint(1, 999999999)
         negative_prompt = """
         technology only,
