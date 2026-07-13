@@ -231,66 +231,67 @@ def get_video_statistics(video_ids):
 
     API_KEY = os.environ["YOUTUBE_API_KEY"]
 
-    ids = ",".join(video_ids)
-
-    print("=" * 80)
-    print("VIDEO IDS")
-    print("=" * 80)
-    print(ids)
-    print("Total IDs:", len(video_ids))
-    
-    url = (
-        "https://www.googleapis.com/youtube/v3/videos"
-        "?part=statistics,snippet"
-        f"&id={ids}"
-        f"&key={API_KEY}"
-    )
-
-    response = requests.get(
-        url,
-        timeout=30
-    )
-
-    if response.status_code != 200:
-
-        print("Statistics API Error")
-        print(response.text)
-
-        return {}
-
-    data = response.json()
-
     stats = {}
 
-    for item in data.get("items", []):
+    # Process IDs in batches of 50
+    for i in range(0, len(video_ids), 50):
 
-        stats[item["id"]] = {
+        batch = video_ids[i:i + 50]
 
-            "views": int(
-                item["statistics"].get(
-                    "viewCount",
-                    0
+        ids = ",".join(batch)
+
+        print("=" * 80)
+        print(f"Processing batch {i//50 + 1}")
+        print(f"Videos in batch: {len(batch)}")
+
+        url = (
+            "https://www.googleapis.com/youtube/v3/videos"
+            "?part=statistics"
+            f"&id={ids}"
+            f"&key={API_KEY}"
+        )
+
+        response = requests.get(
+            url,
+            timeout=30
+        )
+
+        if response.status_code != 200:
+
+            print("Statistics API Error")
+            print(response.text)
+            continue
+
+        data = response.json()
+
+        for item in data.get("items", []):
+
+            stats[item["id"]] = {
+
+                "views": int(
+                    item["statistics"].get(
+                        "viewCount",
+                        0
+                    )
+                ),
+
+                "likes": int(
+                    item["statistics"].get(
+                        "likeCount",
+                        0
+                    )
+                ),
+
+                "comments": int(
+                    item["statistics"].get(
+                        "commentCount",
+                        0
+                    )
                 )
-            ),
 
-            "likes": int(
-                item["statistics"].get(
-                    "likeCount",
-                    0
-                )
-            ),
-
-            "comments": int(
-                item["statistics"].get(
-                    "commentCount",
-                    0
-                )
-            )
-
-        }
+            }
 
     return stats
-
 def generate_images():
 
     prompts = scene_prompts.splitlines()
