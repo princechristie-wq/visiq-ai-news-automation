@@ -174,7 +174,10 @@ def get_youtube_trending_topics():
             f"&key={API_KEY}"
         )
 
-        response = requests.get(url)
+        response = requests.get(
+            url,
+            timeout=30
+        )
 
         if response.status_code != 200:
             print("Search failed:", response.text)
@@ -191,36 +194,35 @@ def get_youtube_trending_topics():
                 "videoId": item["id"]["videoId"]
             })
 
-# =====================================
-# GET VIDEO STATISTICS
-# =====================================
+    # =====================================
+    # GET VIDEO STATISTICS
+    # =====================================
 
-video_ids = []
+    video_ids = []
 
-for video in videos:
+    for video in videos:
+        video_ids.append(video["videoId"])
 
-    video_ids.append(video["videoId"])
+    statistics = get_video_statistics(video_ids)
 
-statistics = get_video_statistics(video_ids)
+    print("\nLATEST AI VIDEOS\n")
 
-print("\nLATEST AI VIDEOS\n")
+    for video in videos[:20]:
 
-for video in videos[:20]:
+        stats = statistics.get(
+            video["videoId"],
+            {}
+        )
 
-    stats = statistics.get(
-        video["videoId"],
-        {}
-    )
+        print("-" * 80)
+        print(video["title"])
+        print(video["channel"])
+        print(video["published"])
+        print("Views:", stats.get("views", 0))
+        print("Likes:", stats.get("likes", 0))
+        print("Comments:", stats.get("comments", 0))
 
-    print("-" * 80)
-    print(video["title"])
-    print(video["channel"])
-    print(video["published"])
-    print("Views:", stats.get("views", 0))
-    print("Likes:", stats.get("likes", 0))
-    print("Comments:", stats.get("comments", 0))
-
-return videos
+    return videos
 # =====================================
 # GET VIDEO STATISTICS
 # =====================================
