@@ -192,7 +192,7 @@ def get_youtube_trending_topics():
             video_id = item["id"]["videoId"]
 
             if video_id in seen_video_ids:
-            continue
+                continue
 
             seen_video_ids.add(video_id)
 
