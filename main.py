@@ -158,7 +158,9 @@ def get_youtube_trending_topics():
         "AI Daily News"
     ]
     videos = []
-
+    
+    seen_video_ids = set()
+    
     for keyword in keywords:
 
         print(f"Searching: {keyword}")
@@ -187,11 +189,18 @@ def get_youtube_trending_topics():
 
         for item in data.get("items", []):
 
+            video_id = item["id"]["videoId"]
+
+            if video_id in seen_video_ids:
+            continue
+
+            seen_video_ids.add(video_id)
+
             videos.append({
                 "title": item["snippet"]["title"],
                 "channel": item["snippet"]["channelTitle"],
                 "published": item["snippet"]["publishedAt"],
-                "videoId": item["id"]["videoId"]
+                "videoId": video_id
             })
 
     # =====================================
