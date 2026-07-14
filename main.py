@@ -11,7 +11,7 @@ import moviepy
 import feedparser
 import re
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 print("MOVIEPY VERSION:", 
 moviepy.__version__)
@@ -227,17 +227,71 @@ def get_youtube_trending_topics():
         likes = stats.get("likes", 0)
         comments = stats.get("comments", 0)
 
+        published = datetime.fromisoformat(
+            video["published"].replace("Z", "+00:00")
+        )
+
+        hours_old = (
+            datetime.now(timezone.utc) - published
+        ).total_seconds() / 3600
+
+        freshness_bonus = 0
+
+        if hours_old <= 24:
+    freshness_bonus = 150000
+
+        elif hours_old <= 48:
+            freshness_bonus = 100000
+
+        elif hours_old <= 72:
+            freshness_bonus = 60000
+
+        elif hours_old <= 168:
+            freshness_bonus = 25000
+        authority_bonus = 0
+
+        channel = video["channel"].lower()
+
+        if "openai" in channel:
+            authority_bonus = 40000
+
+        elif "google" in channel:
+            authority_bonus = 35000
+
+        elif "anthropic" in channel:
+            authority_bonus = 35000
+
+        elif "nvidia" in channel:
+            authority_bonus = 30000
+
+        elif "matt wolfe" in channel:
+            authority_bonus = 20000
+
+        elif "futurepedia" in channel:
+            authority_bonus = 15000
+
+        elif "ai daily brief" in channel:
+            authority_bonus = 15000
+
+        elif "ai revolution" in channel:
+            authority_bonus = 15000
+
         trend_score = (
             views
             + (likes * 20)
             + (comments * 50)
+            + freshness_bonus
+            + authority_bonus
         )
 
         video["views"] = views
         video["likes"] = likes
         video["comments"] = comments
         video["trend_score"] = trend_score
-        
+        video["freshness_bonus"] = freshness_bonus
+        video["authority_bonus"] = authority_bonus
+        video["hours_old"] = round(hours_old, 1)
+
     videos.sort(
         key=lambda x: x["trend_score"],
         reverse=True
@@ -254,6 +308,9 @@ def get_youtube_trending_topics():
         print("Views:", video["views"])
         print("Likes:", video["likes"])
         print("Comments:", video["comments"])
+        print("Hours Old:", video["hours_old"])
+        print("Freshness Bonus:", video["freshness_bonus"])
+        print("Authority Bonus:", video["authority_bonus"])
     
     return videos
 # =====================================
