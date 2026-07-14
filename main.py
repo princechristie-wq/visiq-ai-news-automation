@@ -238,7 +238,7 @@ def get_youtube_trending_topics():
         freshness_bonus = 0
 
         if hours_old <= 24:
-    freshness_bonus = 150000
+            freshness_bonus = 150000
 
         elif hours_old <= 48:
             freshness_bonus = 100000
