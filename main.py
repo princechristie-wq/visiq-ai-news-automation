@@ -206,7 +206,10 @@ def get_youtube_trending_topics():
     # =====================================
     # GET VIDEO STATISTICS
     # =====================================
-
+    print("=" * 80)
+    print("TOTAL UNIQUE VIDEOS FOUND:", len(videos))
+    print("=" * 80)
+    
     video_ids = []
 
     for video in videos:
@@ -214,6 +217,10 @@ def get_youtube_trending_topics():
 
     statistics = get_video_statistics(video_ids)
 
+    print("=" * 80)
+    print("STATISTICS RECEIVED:", len(statistics))
+    print("=" * 80)
+    
     print("\nLATEST AI VIDEOS\n")
 
     for video in videos:
