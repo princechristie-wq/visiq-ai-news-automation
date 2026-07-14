@@ -216,21 +216,45 @@ def get_youtube_trending_topics():
 
     print("\nLATEST AI VIDEOS\n")
 
-    for video in videos[:20]:
+    for video in videos:
 
         stats = statistics.get(
             video["videoId"],
             {}
         )
 
+        views = stats.get("views", 0)
+        likes = stats.get("likes", 0)
+        comments = stats.get("comments", 0)
+
+        trend_score = (
+            views
+            + (likes * 20)
+            + (comments * 50)
+        )
+
+        video["views"] = views
+        video["likes"] = likes
+        video["comments"] = comments
+        video["trend_score"] = trend_score
+        
+    videos.sort(
+        key=lambda x: x["trend_score"],
+        reverse=True
+    )
+
+    print("\nTOP TRENDING AI VIDEOS\n")
+
+    for video in videos[:10]:
+
         print("-" * 80)
         print(video["title"])
         print(video["channel"])
-        print(video["published"])
-        print("Views:", stats.get("views", 0))
-        print("Likes:", stats.get("likes", 0))
-        print("Comments:", stats.get("comments", 0))
-
+        print("Trend Score:", video["trend_score"])
+        print("Views:", video["views"])
+        print("Likes:", video["likes"])
+        print("Comments:", video["comments"])
+    
     return videos
 # =====================================
 # GET VIDEO STATISTICS
