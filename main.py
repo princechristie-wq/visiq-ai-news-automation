@@ -700,7 +700,6 @@ def create_video(topic):
 
     print("Scenes loaded:", len(scenes))
 
-    clips = []
     image_clips = []
 
     scene_duration = audio.duration / max(
