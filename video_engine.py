@@ -35,10 +35,23 @@ BRAND_FONT_SIZE = 55
 # PUBLIC FUNCTION
 # ============================================================
 
-def create_videos(visual_packages):
+# ============================================================
+# PUBLIC FUNCTION
+# ============================================================
 
-    pass
+def create_videos(
 
+    visual_packages,
+
+    music_credits
+
+):
+
+    # Implementation will be connected
+    # during final integration.
+
+    return visual_packages
+    
 def create_background():
     width = 1080
     height = 1920
@@ -256,5 +269,283 @@ def create_final_audio(
             music,
             voice
         ]
+
+    )
+
+# ============================================================
+# PREPARE IMAGE CLIPS
+# ============================================================
+
+def prepare_image_clips(scene_plan, audio_duration):
+
+    image_clips = []
+
+    scene_duration = audio_duration / max(
+        len(scene_plan),
+        1
+    )
+
+    for index, scene in enumerate(scene_plan):
+
+        image_file = f"image_{index+1}.jpg"
+
+        if not os.path.exists(image_file):
+
+            continue
+
+        clip = (
+
+            ImageClip(image_file)
+
+            .resized(height=IMAGE_HEIGHT)
+
+            .resized(
+
+                lambda t:
+                1 + 0.12 * t / scene_duration
+
+            )
+
+            .with_start(
+                index * scene_duration
+            )
+
+            .with_duration(
+                scene_duration
+            )
+
+            .with_position(
+                ("center",220)
+            )
+
+        )
+
+        image_clips.append(
+            clip
+        )
+
+    return image_clips
+
+# ============================================================
+# CREATE HEADLINE
+# ============================================================
+
+def create_headline(topic, duration):
+
+    headline = TextClip(
+
+        text=topic,
+
+        font_size=HEADLINE_FONT_SIZE,
+
+        color="white",
+
+        size=(1000, 200),
+
+        method="caption"
+
+    )
+
+    headline = (
+
+        headline
+
+        .with_duration(duration)
+
+        .with_position(("center", 60))
+
+    )
+
+    return headline
+
+# ============================================================
+# CREATE CAPTIONS
+# ============================================================
+
+def create_captions(script, duration):
+
+    words = script.split()
+
+    caption_clips = []
+
+    chunk_size = 2
+
+    duration_per_word = (
+
+        duration * 0.95
+
+    ) / max(
+
+        len(words),
+
+        1
+
+    )
+
+    for i in range(
+
+        0,
+
+        len(words),
+
+        chunk_size
+
+    ):
+
+        caption_text = " ".join(
+
+            words[i:i + chunk_size]
+
+        )
+
+        start_time = (
+
+            i * duration_per_word
+
+        )
+
+        clip_duration = (
+
+            len(words[i:i + chunk_size])
+
+            * duration_per_word
+
+        )
+
+        caption = TextClip(
+
+            text=caption_text,
+
+            font_size=CAPTION_FONT_SIZE,
+
+            color="white",
+
+            stroke_color="black",
+
+            stroke_width=5,
+
+            size=(950,250),
+
+            method="caption"
+
+        )
+
+        caption = (
+
+            caption
+
+            .with_start(start_time)
+
+            .with_duration(clip_duration)
+
+            .with_position(("center",980))
+
+        )
+
+        caption_clips.append(
+
+            caption
+
+        )
+
+    return caption_clips
+
+# ============================================================
+# CREATE BRAND
+# ============================================================
+
+def create_brand(duration):
+
+    brand = TextClip(
+
+        text="VISIQ AI",
+
+        font_size=BRAND_FONT_SIZE,
+
+        color="white",
+
+        size=(1080,200),
+
+        method="caption"
+
+    )
+
+    brand = (
+
+        brand
+
+        .with_duration(duration)
+
+        .with_position(("center",1760))
+
+    )
+
+    return brand
+
+# ============================================================
+# COMPOSE VIDEO
+# ============================================================
+
+def compose_video(
+
+    background,
+
+    image_clips,
+
+    headline,
+
+    captions,
+
+    brand,
+
+    final_audio,
+
+    duration
+
+):
+
+    video = CompositeVideoClip(
+
+        [background]
+
+        + image_clips
+
+        + [headline]
+
+        + captions
+
+        + [brand],
+
+        size=(VIDEO_WIDTH, VIDEO_HEIGHT)
+
+    )
+
+    video = video.with_audio(
+
+        final_audio
+
+    )
+
+    return video
+
+# ============================================================
+# EXPORT VIDEO
+# ============================================================
+
+def export_video(video):
+
+    video.write_videofile(
+
+        "final_video.mp4",
+
+        fps=FPS,
+
+        codec="libx264",
+
+        audio_codec="aac",
+
+        preset="ultrafast",
+
+        threads=2
 
     )
