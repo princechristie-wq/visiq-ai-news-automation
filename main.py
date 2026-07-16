@@ -928,7 +928,7 @@ def upload_to_youtube():
                 "defaultAudioLanguage": "en"
             },
             "status": {
-                "privacyStatus": "private",
+                "privacyStatus": "public",
                 "selfDeclaredMadeForKids": False,
                 "containsSyntheticMedia": True
             },
