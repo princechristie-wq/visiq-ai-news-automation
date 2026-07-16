@@ -113,3 +113,83 @@ def create_background():
         image
     )
 
+def create_thumbnail(topic):
+
+    width = 1080
+    height = 1920
+
+    # Use first AI image as thumbnail background
+    image = cv2.imread("image_1.jpg")
+
+    image = cv2.resize(
+        image,
+        (width, height)
+    )
+
+    # Dark overlay for text readability
+    overlay = image.copy()
+
+    cv2.rectangle(
+        overlay,
+        (0, 0),
+        (width, height),
+        (0, 0, 0),
+        -1
+    )
+
+    image = cv2.addWeighted(
+        overlay,
+        0.45,
+        image,
+        0.55,
+        0
+    )
+
+    # Bottom branding bar
+    cv2.rectangle(
+        image,
+        (0, 560),
+        (1280, 720),
+        (255, 60, 60),
+        -1
+    )
+
+    # Channel branding
+    cv2.putText(
+        image,
+        "VISIQ AI",
+        (40, 650),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        2,
+        (255, 255, 255),
+        4
+    )
+
+    # Thumbnail headline
+    headline = textwrap.fill(
+        "BREAKING AI NEWS",
+        width=15
+    )
+
+    y0 = 180
+
+    for line in headline.split("\n"):
+
+        cv2.putText(
+            image,
+            line,
+            (50, y0),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            2.2,
+            (255, 255, 255),
+            5
+        )
+
+        y0 += 100
+
+    cv2.imwrite(
+        "thumbnail.jpg",
+        image
+    )
+
+    print("THUMBNAIL CREATED")
