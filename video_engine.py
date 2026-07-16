@@ -196,3 +196,65 @@ def create_thumbnail(topic):
     )
 
     print("THUMBNAIL CREATED")
+
+# ============================================================
+# LOAD VOICE
+# ============================================================
+
+def load_voice():
+
+    return AudioFileClip(
+        "voice.mp3"
+    )
+
+# ============================================================
+# LOAD BACKGROUND MUSIC
+# ============================================================
+
+def load_background_music(audio, music_credits):
+
+    music_files = list(
+        music_credits.keys()
+    )
+
+    music_file = random.choice(
+        music_files
+    )
+
+    music = AudioFileClip(
+        music_file
+    )
+
+    music = music.with_effects(
+
+        [
+            afx.AudioLoop(
+                duration=audio.duration
+            )
+        ]
+
+    )
+
+    music = music.with_volume_scaled(
+        0.12
+    )
+
+    return music, music_file
+
+# ============================================================
+# CREATE FINAL AUDIO
+# ============================================================
+
+def create_final_audio(
+    voice,
+    music
+):
+
+    return CompositeAudioClip(
+
+        [
+            music,
+            voice
+        ]
+
+    )
