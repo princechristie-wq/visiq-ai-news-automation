@@ -11,7 +11,7 @@ import moviepy
 import feedparser
 import re
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 print("MOVIEPY VERSION:", 
 moviepy.__version__)
@@ -22,8 +22,6 @@ from moviepy import (
     TextClip,
     CompositeVideoClip,
     CompositeAudioClip,
-    ColorClip,
-    concatenate_videoclips,
     afx,
 )
 
@@ -206,9 +204,6 @@ def get_youtube_trending_topics():
     # =====================================
     # GET VIDEO STATISTICS
     # =====================================
-    print("=" * 80)
-    print("TOTAL UNIQUE VIDEOS FOUND:", len(videos))
-    print("=" * 80)
     
     video_ids = []
 
@@ -217,10 +212,7 @@ def get_youtube_trending_topics():
 
     statistics = get_video_statistics(video_ids)
 
-    print("=" * 80)
-    print("STATISTICS RECEIVED:", len(statistics))
-    print("=" * 80)
-    
+ 
     print("\nLATEST AI VIDEOS\n")
 
     for video in videos:
@@ -694,11 +686,7 @@ def create_video(topic):
     final_audio = CompositeAudioClip(
         [music, audio]
     )
-    print("Current directory:", os.getcwd())
-    print("Files in repository:")
-    print(os.listdir("."))
-    print("Selected music:", music_file)
-
+    
     create_background()
     background = (
         ImageClip("background.jpg")
