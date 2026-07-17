@@ -176,10 +176,13 @@ def get_video_statistics(video_ids):
 
         if response.status_code != 200:
 
-            print("Statistics API Error")
-            print(response.text)
-            continue
+            print(
+                f"Statistics API Error ({response.status_code})"
+            )
 
+            print(response.text)
+
+            continue
         data = response.json()
 
         for item in data.get("items", []):
@@ -344,7 +347,13 @@ def get_youtube_trending_topics():
 
         if response.status_code != 200:
 
-            print("Search failed.")
+            print(
+                f"Search failed ({response.status_code}) "
+                f"for keyword: {keyword}"
+            )
+
+            print(response.text)
+
             continue
 
         data = response.json()
