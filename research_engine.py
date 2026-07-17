@@ -72,7 +72,7 @@ def research_topic(topic):
     knowledge["description"] = details.get(
         "description",
         ""
-    )
+    ).strip()
 
     return knowledge
 
