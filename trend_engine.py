@@ -89,7 +89,7 @@ YOUTUBE_SEARCH_KEYWORDS = [
 # ============================================================
 # TREND SCORING CONFIGURATION
 # ============================================================
-
+VIDEOS_PER_DAY = 4
 VIEW_WEIGHT = 1
 LIKE_WEIGHT = 20
 COMMENT_WEIGHT = 50
@@ -121,9 +121,25 @@ AUTHORITY_CHANNELS = {
     "the verge": 10000,
 }
 
+# ============================================================
+# GET YOUTUBE API KEY
+# ============================================================
+
+def get_api_key():
+
+    API_KEY = get_api_key()
+
+    return api_key
+
 def get_video_statistics(video_ids):
 
-    API_KEY = os.environ["YOUTUBE_API_KEY"]
+    API_KEY = os.getenv("YOUTUBE_API_KEY")
+
+    if not API_KEY:
+
+        raise RuntimeError(
+            "YOUTUBE_API_KEY environment variable is missing."
+        )
 
     stats = {}
 
@@ -145,10 +161,18 @@ def get_video_statistics(video_ids):
             f"&key={API_KEY}"
         )
 
-        response = requests.get(
-            url,
-            timeout=30
-        )
+        try:
+
+            response = requests.get(
+                url,
+                timeout=30
+            )
+
+        except requests.RequestException as e:
+
+            print(f"Network error: {e}")
+
+            continue
 
         if response.status_code != 200:
 
@@ -277,48 +301,6 @@ def calculate_trend_score(video, statistics):
     return video
 
 # ============================================================
-# NORMALIZE TITLE
-# ============================================================
-
-def normalize_title(title):
-
-    title = title.lower()
-
-    words = title.split()
-
-    ignore_words = {
-
-        "the",
-        "a",
-        "an",
-        "new",
-        "official",
-        "today",
-        "breaking",
-        "live",
-        "update",
-        "updates",
-        "news",
-        "video",
-        "shorts",
-        "short",
-        "ai"
-
-    }
-
-    words = [
-
-        word
-
-        for word in words
-
-        if word not in ignore_words
-
-    ]
-
-    return " ".join(words)
-
-# ============================================================
 # SEARCH YOUTUBE
 # ============================================================
 
@@ -328,7 +310,7 @@ def get_youtube_trending_topics():
     print("SEARCHING YOUTUBE...")
     print("=" * 80)
 
-    API_KEY = os.environ["YOUTUBE_API_KEY"]
+    API_KEY = get_api_key()
 
     videos = []
 
@@ -347,10 +329,18 @@ def get_youtube_trending_topics():
             f"&key={API_KEY}"
         )
 
-        response = requests.get(
-            url,
-            timeout=30
-        )
+        try:
+
+            response = requests.get(
+                url,
+                timeout=30
+            )
+
+        except requests.RequestException as e:
+
+            print(f"Network error: {e}")
+
+            continue
 
         if response.status_code != 200:
 
@@ -379,7 +369,19 @@ def get_youtube_trending_topics():
 def get_trending_topics():
 
     videos = get_youtube_trending_topics()
+    unique_videos = {}
 
+    for video in videos:
+
+        unique_videos[video["videoId"]] = video
+
+    videos = list(unique_videos.values())
+    
+    if not videos:
+
+    print("No trending videos found.")
+
+    return []
     video_ids = []
 
     for video in videos:
@@ -410,4 +412,4 @@ def get_trending_topics():
         reverse=True
     )
 
-    return scored_videos[:4]
+    return scored_videos[:VIDEOS_PER_DAY]
