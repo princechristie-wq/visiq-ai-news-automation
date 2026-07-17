@@ -1,3 +1,4 @@
+import os
 import requests
 
 # ============================================================
@@ -5,6 +6,24 @@ import requests
 # ============================================================
 
 MAX_DESCRIPTION_LENGTH = 3000
+
+# ============================================================
+# GET YOUTUBE API KEY
+# ============================================================
+
+import os
+
+def get_api_key():
+
+    api_key = os.getenv("YOUTUBE_API_KEY")
+
+    if not api_key:
+
+        raise RuntimeError(
+            "YOUTUBE_API_KEY environment variable is missing."
+        )
+
+    return api_key
 
 # ============================================================
 # CREATE KNOWLEDGE PACKAGE
@@ -16,6 +35,11 @@ def create_knowledge_package(topic):
 
         # Trend Engine Data
         "video_id": topic["videoId"],
+        
+        "video_url": (
+            f"https://www.youtube.com/watch?v={topic['videoId']}"
+        ),
+        
         "title": topic["title"],
         "channel": topic["channel"],
         "published": topic["published"],
@@ -37,14 +61,13 @@ def create_knowledge_package(topic):
 # RESEARCH SINGLE TOPIC
 # ============================================================
 
-def research_topic(topic, api_key):
+def research_topic(topic):
 
     knowledge = create_knowledge_package(topic)
 
     details = get_video_details(
         topic["videoId"],
-        api_key
-    )
+     )
 
     knowledge["description"] = details.get(
         "description",
@@ -57,7 +80,7 @@ def research_topic(topic, api_key):
 # PUBLIC FUNCTION
 # ============================================================
 
-def research_topics(topics, api_key):
+def research_topics(topics):
 
     knowledge_packages = []
 
@@ -65,7 +88,6 @@ def research_topics(topics, api_key):
 
         package = research_topic(
             topic,
-            api_key
         )
 
         knowledge_packages.append(
@@ -78,8 +100,10 @@ def research_topics(topics, api_key):
 # GET VIDEO DETAILS
 # ============================================================
 
-def get_video_details(video_id, api_key):
-
+def get_video_details(video_id):
+    
+    api_key = get_api_key()
+    
     url = (
         "https://www.googleapis.com/youtube/v3/videos"
         "?part=snippet"
@@ -87,20 +111,42 @@ def get_video_details(video_id, api_key):
         f"&key={api_key}"
     )
 
-    response = requests.get(
-        url,
-        timeout=30
-    )
+    try:
+
+        response = requests.get(
+            url,
+            timeout=30
+        )
+
+    except requests.RequestException as e:
+
+        print(
+            f"Failed to fetch video details: {e}"
+        )
+
+        return {}
 
     if response.status_code != 200:
 
-        return {}
+    print(
+        f"Failed to fetch details for video "
+        f"{video_id} "
+        f"({response.status_code})"
+    )
+
+    print(response.text)
+
+    return {}
 
     data = response.json()
 
     if not data.get("items"):
 
-        return {}
+    print(
+        f"No details found for video: {video_id}"
+    )
+
+    return {}
 
     snippet = data["items"][0]["snippet"]
 
