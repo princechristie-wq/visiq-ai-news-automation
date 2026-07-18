@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 
 from googleapiclient.http import MediaFileUpload
 
+
 # ============================================================
 # YOUTUBE ENGINE CONFIGURATION
 # ============================================================
@@ -16,11 +17,22 @@ DEFAULT_LANGUAGE = "en"
 
 PRIVACY_STATUS = "public"
 
+VIDEO_FILE = "final_video.mp4"
+
+YOUTUBE_API_NAME = "youtube"
+
+YOUTUBE_API_VERSION = "v3"
+
+
 # ============================================================
 # AUTHENTICATE
 # ============================================================
 
 def create_youtube_service():
+    """
+    Create and return an authenticated
+    YouTube Data API service.
+    """
 
     creds = Credentials(
 
@@ -42,15 +54,18 @@ def create_youtube_service():
 
     )
 
-    return build(
+    youtube = build(
 
-        "youtube",
+        YOUTUBE_API_NAME,
 
-        "v3",
+        YOUTUBE_API_VERSION,
 
         credentials=creds
 
     )
+
+    return youtube
+
 
 # ============================================================
 # UPLOAD VIDEO
@@ -65,6 +80,27 @@ def upload_video(
     hashtags
 
 ):
+    """
+    Upload a single video to YouTube.
+    """
+
+    if not os.path.exists(
+
+        VIDEO_FILE
+
+    ):
+
+        raise FileNotFoundError(
+
+            f"Video file not found: {VIDEO_FILE}"
+
+        )
+
+    print(
+
+        f"Uploading '{title}'..."
+
+    )
 
     youtube = create_youtube_service()
 
@@ -110,7 +146,7 @@ def upload_video(
 
         media_body=MediaFileUpload(
 
-            "final_video.mp4",
+            VIDEO_FILE,
 
             resumable=True
 
@@ -120,17 +156,47 @@ def upload_video(
 
     response = request.execute()
 
+    print(
+
+        f"Upload completed: {response['id']}"
+
+    )
+
     return response["id"]
+
 
 # ============================================================
 # PUBLIC FUNCTION
 # ============================================================
 
-def upload_videos(video_packages):
+def upload_videos(
+    video_packages
+):
+    """
+    Upload all generated videos.
+    """
+
+    print(
+
+        f"Uploading {len(video_packages)} video(s)..."
+
+    )
 
     uploaded = []
 
-    for package in video_packages:
+    for index, package in enumerate(
+
+        video_packages,
+
+        start=1
+
+    ):
+
+        print(
+
+            f"Uploading video {index}/{len(video_packages)}"
+
+        )
 
         video_id = upload_video(
 
@@ -144,6 +210,16 @@ def upload_videos(video_packages):
 
         package["youtube_video_id"] = video_id
 
-        uploaded.append(package)
+        uploaded.append(
+
+            package
+
+        )
+
+    print(
+
+        "All uploads completed."
+
+    )
 
     return uploaded
