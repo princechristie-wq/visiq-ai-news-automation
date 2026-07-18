@@ -1,3 +1,4 @@
+import os
 import requests
 import random
 from groq import Groq
@@ -18,10 +19,22 @@ IMAGE_MODEL = "flux"
 # CREATE GROQ CLIENT
 # ============================================================
 
+def get_api_key():
+
+    api_key = os.getenv("GROQ_API_KEY")
+
+    if not api_key:
+
+        raise ValueError(
+            "GROQ_API_KEY not found."
+        )
+
+    return api_key
+
 def create_client(api_key):
 
     return Groq(
-        api_key=api_key
+        api_key=get_api_key()
     )
 
 # ============================================================
@@ -90,61 +103,84 @@ MOTION_TYPES = [
 def build_visual_prompt(scene_text):
 
     return f"""
-You are an expert cinematic storyboard artist.
+You are an expert cinematic storyboard artist for YouTube Shorts.
 
 Narration:
 
 {scene_text}
 
-Generate ONE visual idea.
+Your task is to decide the best visual for this narration.
 
 Rules:
 
-- Match the narration.
-- Prefer stock footage when possible.
-- If stock footage is unlikely, use AI image.
-- No text.
-- No watermark.
-- No logos.
-- Cinematic.
-- Photorealistic.
+- If real-world footage can represent the narration, choose "stock".
+- If the narration describes concepts, futuristic technology, AI, imaginary scenes, or anything difficult to film, choose "image".
+- The visual must directly match the narration.
+- Search queries should contain only the essential keywords.
+- Image prompts must be cinematic, photorealistic, detailed, and contain no text, logos, or watermarks.
 
-Return only:
+Return ONLY in exactly this format:
 
-VISUAL_TYPE:
-SEARCH_QUERY:
-IMAGE_PROMPT:
+VISUAL_TYPE: stock OR image
+SEARCH_QUERY: ...
+IMAGE_PROMPT: ...
+
+Do not return any explanation.
+Do not add headings.
+Do not add markdown.
+Do not add extra text.
 """
-
 # ============================================================
 # GENERATE VISUAL DECISION
 # ============================================================
 
-def generate_visual_decision(scene_text, api_key):
+def generate_visual_decision(scene_text):
 
-    client = create_client(api_key)
+    client = create_client()
 
-    prompt = build_visual_prompt(scene_text)
-
-    response = client.chat.completions.create(
-
-        model="llama-3.3-70b-versatile",
-
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-
+    prompt = build_visual_prompt(
+        scene_text
     )
 
-    result = response.choices[0].message.content.strip()
+    try:
+
+        response = client.chat.completions.create(
+
+            model=LLM_MODEL,
+
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+
+        )
+
+        result = response.choices[0].message.content.strip()
+
+    except Exception as e:
+
+        print("Failed to generate visual for scene.")
+
+        print(e)
+
+        return {
+
+            "visual_type": "image",
+
+            "search_query": "",
+
+            "image_prompt": "A cinematic photorealistic illustration matching the narration."
+
+        }
 
     visual = {
 
         "visual_type": "image",
+
         "search_query": "",
+
         "image_prompt": ""
 
     }
@@ -154,31 +190,43 @@ def generate_visual_decision(scene_text, api_key):
         if line.startswith("VISUAL_TYPE:"):
 
             visual["visual_type"] = line.replace(
+
                 "VISUAL_TYPE:",
+
                 ""
+
             ).strip().lower()
 
         elif line.startswith("SEARCH_QUERY:"):
 
             visual["search_query"] = line.replace(
+
                 "SEARCH_QUERY:",
+
                 ""
+
             ).strip()
 
         elif line.startswith("IMAGE_PROMPT:"):
 
             visual["image_prompt"] = line.replace(
+
                 "IMAGE_PROMPT:",
+
                 ""
+
             ).strip()
 
-    return visual
+    if visual["visual_type"] not in ["stock", "image"]:
 
+        visual["visual_type"] = "image"
+
+    return visual
 # ============================================================
 # CREATE SCENE PLAN
 # ============================================================
 
-def create_scene_plan(script, api_key):
+def create_scene_plan(script):
 
     scenes = split_script_into_scenes(
         script
@@ -186,14 +234,33 @@ def create_scene_plan(script, api_key):
 
     plan = []
 
-    for scene in scenes:
+    previous_motion = None
+
+    for scene_number, scene in enumerate(scenes, start=1):
 
         visual = generate_visual_decision(
-            scene,
-            api_key
+            scene
         )
 
+        available_motions = [
+
+            motion
+
+            for motion in MOTION_TYPES
+
+            if motion != previous_motion
+
+        ]
+
+        selected_motion = random.choice(
+            available_motions
+        )
+
+        previous_motion = selected_motion
+
         plan.append({
+
+            "scene_number": scene_number,
 
             "narration": scene,
 
@@ -203,27 +270,24 @@ def create_scene_plan(script, api_key):
 
             "image_prompt": visual["image_prompt"],
 
-            "motion": random.choice(
-                MOTION_TYPES
-            )
+            "motion": selected_motion
 
         })
 
     return plan
-
+    
 # ============================================================
 # PUBLIC FUNCTION
 # ============================================================
 
-def generate_visual_plan(knowledge_packages, api_key):
+def generate_visual_plan(knowledge_packages):
 
     visual_packages = []
 
     for knowledge in knowledge_packages:
 
         knowledge["scene_plan"] = create_scene_plan(
-            knowledge["script"],
-            api_key
+            knowledge["script"]
         )
 
         visual_packages.append(
