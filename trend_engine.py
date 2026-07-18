@@ -127,9 +127,7 @@ AUTHORITY_CHANNELS = {
 
 def get_api_key():
 
-    API_KEY = get_api_key()
-
-    return api_key
+    return API_KEY
 
 def get_video_statistics(video_ids):
 
