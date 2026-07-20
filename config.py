@@ -47,6 +47,12 @@ PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
+YOUTUBE_CLIENT_ID = os.getenv("YOUTUBE_CLIENT_ID")
+
+YOUTUBE_CLIENT_SECRET = os.getenv("YOUTUBE_CLIENT_SECRET")
+
+YOUTUBE_REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN")
+
 # ----------------------------------------------------------
 # Project Directories
 # ----------------------------------------------------------
@@ -134,15 +140,29 @@ def validate_provider():
 def get_current_api_key():
 
     if AI_PROVIDER == "groq":
-        return GROQ_API_KEY
+        key = GROQ_API_KEY
 
-    if AI_PROVIDER == "openrouter":
-        return OPENROUTER_API_KEY
+    elif AI_PROVIDER == "openrouter":
+        key = OPENROUTER_API_KEY
 
-    if AI_PROVIDER == "gemini":
-        return GEMINI_API_KEY
+    elif AI_PROVIDER == "gemini":
+        key = GEMINI_API_KEY
 
-    if AI_PROVIDER == "openai":
-        return OPENAI_API_KEY
+    elif AI_PROVIDER == "openai":
+        key = OPENAI_API_KEY
 
-    return None
+    else:
+        key = None
+
+    if not key:
+        raise ValueError(
+            f"Missing API key for provider: {AI_PROVIDER}"
+        )
+
+    return key
+    
+# ----------------------------------------------------------
+# Startup Validation
+# ----------------------------------------------------------
+
+validate_provider()
