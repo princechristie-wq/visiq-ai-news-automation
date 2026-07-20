@@ -1,8 +1,9 @@
 import os
 import random
+import textwrap
+
 import cv2
 import numpy as np
-import textwrap
 
 from moviepy import (
     AudioFileClip,
@@ -22,11 +23,8 @@ from moviepy import (
 # ------------------------------------------------------------
 
 VIDEO_WIDTH = 1080
-
 VIDEO_HEIGHT = 1920
-
 FPS = 24
-
 
 # ------------------------------------------------------------
 # Image Settings
@@ -34,230 +32,232 @@ FPS = 24
 
 IMAGE_DISPLAY_HEIGHT = 1450
 
-
 # ------------------------------------------------------------
 # Headline Settings
 # ------------------------------------------------------------
 
 HEADLINE_FONT_SIZE = 48
-
 HEADLINE_WIDTH = 1000
-
 HEADLINE_HEIGHT = 200
-
 HEADLINE_Y_POSITION = 60
-
 
 # ------------------------------------------------------------
 # Caption Settings
 # ------------------------------------------------------------
 
 CAPTION_FONT_SIZE = 95
-
 CAPTION_WIDTH = 950
-
 CAPTION_HEIGHT = 250
-
 CAPTION_Y_POSITION = 980
-
 CAPTION_STROKE_WIDTH = 5
-
 CAPTION_WORDS_PER_CHUNK = 2
-
 CAPTION_DURATION_FACTOR = 0.95
-
 
 # ------------------------------------------------------------
 # Branding Settings
 # ------------------------------------------------------------
 
 BRAND_TEXT = "VISIQ AI"
-
 BRAND_FONT_SIZE = 55
-
 BRAND_WIDTH = VIDEO_WIDTH
-
 BRAND_HEIGHT = 200
-
 BRAND_Y_POSITION = 1760
-
 
 # ------------------------------------------------------------
 # Export Settings
 # ------------------------------------------------------------
 
 VIDEO_CODEC = "libx264"
-
 AUDIO_CODEC = "aac"
-
 EXPORT_PRESET = "ultrafast"
-
 EXPORT_THREADS = 2
-
 
 # ------------------------------------------------------------
 # File Names
 # ------------------------------------------------------------
 
 BACKGROUND_FILE = "background.jpg"
-
 THUMBNAIL_FILE = "thumbnail.jpg"
-
 VOICE_FILE = "voice.mp3"
-
 OUTPUT_VIDEO_FILE = "final_video.mp4"
+
+
+# ============================================================
+# VALIDATION
+# ============================================================
+
+def validate_package(knowledge):
+    """
+    Validate that the package contains the minimum
+    information required for video generation.
+    """
+
+    required_fields = [
+
+        "title",
+        "script",
+        "scene_plan"
+
+    ]
+
+    for field in required_fields:
+
+        if field not in knowledge:
+
+            raise ValueError(
+                f"Missing required field: {field}"
+            )
+
+    if not knowledge["script"].strip():
+
+        raise ValueError(
+            "Script is empty."
+        )
+
+    if not knowledge["scene_plan"]:
+
+        raise ValueError(
+            "Scene plan is empty."
+        )
+
 
 # ============================================================
 # PUBLIC FUNCTION
 # ============================================================
 
 def create_videos(
-
     visual_packages,
-
     music_credits
-
 ):
+    """
+    Generate videos from all visual packages.
 
+    Returns:
+        list[dict]
+    """
+
+    print("=" * 80)
+    print("VIDEO GENERATION")
+    print("=" * 80)
+
+    total = len(visual_packages)
+
+    completed = []
+
+    for index, knowledge in enumerate(
+        visual_packages,
+        start=1
+    ):
+
+        print(
+            f"[{index}/{total}] {knowledge.get('title', 'Untitled')}"
+        )
+
+        try:
+
+            validate_package(
+                knowledge
+            )
+
+            completed.append(
+                knowledge
+            )
+
+        except Exception as e:
+
+            print(
+                f"Skipping package: {e}"
+            )
+
+            knowledge["video_error"] = str(e)
+
+            completed.append(
+                knowledge
+            )
+
+    print("=" * 80)
     print(
-
-        f"Creating {len(visual_packages)} video(s)..."
-
+        f"Validated {len(completed)} package(s)"
     )
+    print("=" * 80)
 
-    # Full implementation will be added
-    # after all helper functions are reviewed.
-
-    return visual_packages
-
+    return completed
 
 # ============================================================
 # CREATE BACKGROUND
 # ============================================================
 
 def create_background():
+    """
+    Create the default Visiq AI background.
+    """
 
     width = VIDEO_WIDTH
-
     height = VIDEO_HEIGHT
 
     image = np.zeros(
-
         (height, width, 3),
-
         dtype=np.uint8
-
     )
+
+    # --------------------------------------------------------
+    # Gradient
+    # --------------------------------------------------------
 
     for y in range(height):
 
-        r = int(
+        r = int(20 + (y / height) * 40)
+        g = int(20 + (y / height) * 20)
+        b = int(60 + (y / height) * 120)
 
-            20 + (y / height) * 40
+        image[y, :] = (b, g, r)
 
-        )
-
-        g = int(
-
-            20 + (y / height) * 20
-
-        )
-
-        b = int(
-
-            60 + (y / height) * 120
-
-        )
-
-        image[y, :] = (
-
-            b,
-
-            g,
-
-            r
-
-        )
+    # --------------------------------------------------------
+    # Decorative particles
+    # --------------------------------------------------------
 
     for _ in range(150):
 
-        x = random.randint(
-
-            0,
-
-            width
-
-        )
-
-        y = random.randint(
-
-            0,
-
-            height
-
-        )
-
-        radius = random.randint(
-
-            2,
-
-            5
-
-        )
+        x = random.randint(0, width)
+        y = random.randint(0, height)
+        radius = random.randint(2, 5)
 
         cv2.circle(
-
             image,
-
             (x, y),
-
             radius,
-
             (255, 255, 255),
-
             -1
-
         )
 
+    # --------------------------------------------------------
+    # Branding strip
+    # --------------------------------------------------------
+
     cv2.rectangle(
-
         image,
-
         (0, 1640),
-
-        (width, 1920),
-
+        (width, height),
         (255, 60, 60),
-
         -1
-
     )
 
     cv2.putText(
-
         image,
-
         "VISIQ AI NEWS",
-
         (50, 80),
-
         cv2.FONT_HERSHEY_SIMPLEX,
-
         2,
-
         (255, 255, 255),
-
         4
-
     )
 
     cv2.imwrite(
-
         BACKGROUND_FILE,
-
         image
-
     )
+
+    return BACKGROUND_FILE
 
 
 # ============================================================
@@ -265,170 +265,114 @@ def create_background():
 # ============================================================
 
 def create_thumbnail(topic):
+    """
+    Create a thumbnail using the first generated image.
+    """
 
     width = VIDEO_WIDTH
-
     height = VIDEO_HEIGHT
 
-    image = cv2.imread(
-
-        "image_1.jpg"
-
-    )
+    image = cv2.imread("image_1.jpg")
 
     if image is None:
 
         raise FileNotFoundError(
-
             "image_1.jpg not found."
-
         )
 
     image = cv2.resize(
-
         image,
-
         (width, height)
-
     )
-
-    # Dark overlay for text readability
 
     overlay = image.copy()
 
     cv2.rectangle(
-
         overlay,
-
         (0, 0),
-
         (width, height),
-
         (0, 0, 0),
-
         -1
-
     )
 
     image = cv2.addWeighted(
-
         overlay,
-
         0.45,
-
         image,
-
         0.55,
-
         0
-
     )
-
-    # Bottom branding bar
 
     cv2.rectangle(
-
         image,
-
         (0, 560),
-
         (width, 720),
-
         (255, 60, 60),
-
         -1
-
     )
-
-    # Channel branding
 
     cv2.putText(
-
         image,
-
-        "VISIQ AI",
-
+        BRAND_TEXT,
         (40, 650),
-
         cv2.FONT_HERSHEY_SIMPLEX,
-
         2,
-
         (255, 255, 255),
-
         4
-
     )
-
-    # Thumbnail headline
 
     headline = textwrap.fill(
-
-        "BREAKING AI NEWS",
-
+        topic,
         width=15
-
     )
 
-    y0 = 180
+    y = 180
 
     for line in headline.split("\n"):
 
         cv2.putText(
-
             image,
-
             line,
-
-            (50, y0),
-
+            (50, y),
             cv2.FONT_HERSHEY_SIMPLEX,
-
-            2.2,
-
+            2.0,
             (255, 255, 255),
-
             5
-
         )
 
-        y0 += 100
+        y += 95
 
     cv2.imwrite(
-
         THUMBNAIL_FILE,
-
         image
-
     )
 
-    print(
+    print("Thumbnail created.")
 
-        "THUMBNAIL CREATED"
+    return THUMBNAIL_FILE
 
-    )
 
 # ============================================================
 # LOAD VOICE
 # ============================================================
 
 def load_voice():
+    """
+    Load the narration audio.
+    """
 
     if not os.path.exists(
         VOICE_FILE
     ):
 
         raise FileNotFoundError(
-
             f"Voice file not found: {VOICE_FILE}"
-
         )
 
     return AudioFileClip(
-
         VOICE_FILE
-
     )
+
 
 # ============================================================
 # LOAD BACKGROUND MUSIC
@@ -438,6 +382,9 @@ def load_background_music(
     audio,
     music_credits
 ):
+    """
+    Load and loop background music.
+    """
 
     if not music_credits:
 
@@ -458,38 +405,27 @@ def load_background_music(
     ):
 
         raise FileNotFoundError(
-
             f"Music file not found: {music_file}"
-
         )
 
     music = AudioFileClip(
-
         music_file
-
     )
 
     music = music.with_effects(
-
         [
-
             afx.AudioLoop(
-
                 duration=audio.duration
-
             )
-
         ]
-
     )
 
     music = music.with_volume_scaled(
-
         0.12
-
     )
 
     return music, music_file
+
 
 # ============================================================
 # CREATE FINAL AUDIO
@@ -500,20 +436,15 @@ def create_final_audio(
     music
 ):
     """
-    Combine voice narration and background music
-    into a single audio track.
+    Combine narration and background music.
     """
 
-    final_audio = CompositeAudioClip(
-
+    return CompositeAudioClip(
         [
             music,
             voice
         ]
-
     )
-
-    return final_audio
 
 # ============================================================
 # PREPARE IMAGE CLIPS
@@ -523,12 +454,19 @@ def prepare_image_clips(
     scene_plan,
     audio_duration
 ):
+    """
+    Prepare image clips with simple motion effects.
+    """
 
     image_clips = []
 
-    scene_duration = audio_duration / max(
+    total_scenes = max(
         len(scene_plan),
         1
+    )
+
+    scene_duration = (
+        audio_duration / total_scenes
     )
 
     for index, scene in enumerate(scene_plan):
@@ -538,16 +476,12 @@ def prepare_image_clips(
             index + 1
         )
 
-        image_file = (
-            f"image_{scene_number}.jpg"
-        )
+        image_file = f"image_{scene_number}.jpg"
 
-        if not os.path.exists(
-            image_file
-        ):
+        if not os.path.exists(image_file):
 
             print(
-                f"Warning: {image_file} not found. Skipping scene."
+                f"Warning: {image_file} not found. Skipping."
             )
 
             continue
@@ -566,44 +500,61 @@ def prepare_image_clips(
         if motion == "zoom_in":
 
             clip = clip.resized(
-
                 lambda t:
-                1 + 0.12 * t / scene_duration
-
+                1 + 0.12 * (t / scene_duration)
             )
 
         elif motion == "zoom_out":
 
             clip = clip.resized(
-
                 lambda t:
-                1.12 - 0.12 * t / scene_duration
-
+                1.12 - 0.12 * (t / scene_duration)
             )
 
-        # Future motion support
-        # pan_left
-        # pan_right
-        # pan_up
-        # pan_down
-        # rotate
+        elif motion == "pan_left":
+
+            clip = clip.with_position(
+                lambda t: (
+                    -80 * (t / scene_duration),
+                    220
+                )
+            )
+
+        elif motion == "pan_right":
+
+            clip = clip.with_position(
+                lambda t: (
+                    80 * (t / scene_duration),
+                    220
+                )
+            )
+
+        elif motion == "pan_up":
+
+            clip = clip.with_position(
+                lambda t: (
+                    "center",
+                    220 - 80 * (t / scene_duration)
+                )
+            )
+
+        elif motion == "pan_down":
+
+            clip = clip.with_position(
+                lambda t: (
+                    "center",
+                    220 + 80 * (t / scene_duration)
+                )
+            )
 
         clip = (
-
             clip
-
             .with_start(
                 index * scene_duration
             )
-
             .with_duration(
                 scene_duration
             )
-
-            .with_position(
-                ("center", 220)
-            )
-
         )
 
         image_clips.append(
@@ -611,6 +562,7 @@ def prepare_image_clips(
         )
 
     return image_clips
+
 
 # ============================================================
 # CREATE HEADLINE
@@ -621,39 +573,26 @@ def create_headline(
     duration
 ):
     """
-    Create the headline shown at the top
-    of the video.
+    Create the headline displayed at the top.
     """
 
-    headline = TextClip(
-
-        text=topic,
-
-        font_size=HEADLINE_FONT_SIZE,
-
-        color="white",
-
-        size=(1000, 200),
-
-        method="caption"
-
-    )
-
-    headline = (
-
-        headline
-
-        .with_duration(
-            duration
+    return (
+        TextClip(
+            text=topic,
+            font_size=HEADLINE_FONT_SIZE,
+            color="white",
+            size=(
+                HEADLINE_WIDTH,
+                HEADLINE_HEIGHT
+            ),
+            method="caption"
         )
-
+        .with_duration(duration)
         .with_position(
-            ("center", 60)
+            ("center", HEADLINE_Y_POSITION)
         )
-
     )
 
-    return headline
 
 # ============================================================
 # CREATE CAPTIONS
@@ -664,8 +603,7 @@ def create_captions(
     duration
 ):
     """
-    Create timed caption clips from the
-    narration script.
+    Create animated caption clips.
     """
 
     words = script.split()
@@ -673,115 +611,62 @@ def create_captions(
     caption_clips = []
 
     duration_per_word = (
-
         duration * CAPTION_DURATION_FACTOR
-
     ) / max(
-
         len(words),
         1
-
     )
 
     for i in range(
-
         0,
-
         len(words),
-
         CAPTION_WORDS_PER_CHUNK
-
     ):
 
-        caption_text = " ".join(
+        chunk = words[
+            i:i + CAPTION_WORDS_PER_CHUNK
+        ]
 
-            words[
-                i:i + CAPTION_WORDS_PER_CHUNK
-            ]
-
-        )
+        caption = " ".join(chunk)
 
         start_time = (
-
             i * duration_per_word
-
         )
 
         clip_duration = (
-
-            len(
-
-                words[
-                    i:i + CAPTION_WORDS_PER_CHUNK
-                ]
-
-            )
-
+            len(chunk)
             * duration_per_word
-
         )
 
-        caption = TextClip(
-
-            text=caption_text,
-
-            font_size=CAPTION_FONT_SIZE,
-
-            color="white",
-
-            stroke_color="black",
-
-            stroke_width=CAPTION_STROKE_WIDTH,
-
-            size=(
-
-                CAPTION_WIDTH,
-
-                CAPTION_HEIGHT
-
-            ),
-
-            method="caption"
-
-        )
-
-        caption = (
-
-            caption
-
-            .with_start(
-
-                start_time
-
+        clip = (
+            TextClip(
+                text=caption,
+                font_size=CAPTION_FONT_SIZE,
+                color="white",
+                stroke_color="black",
+                stroke_width=CAPTION_STROKE_WIDTH,
+                size=(
+                    CAPTION_WIDTH,
+                    CAPTION_HEIGHT
+                ),
+                method="caption"
             )
-
-            .with_duration(
-
-                clip_duration
-
-            )
-
+            .with_start(start_time)
+            .with_duration(clip_duration)
             .with_position(
-
                 (
-
                     "center",
-
                     CAPTION_Y_POSITION
-
                 )
-
             )
-
         )
 
         caption_clips.append(
-
-            caption
-
+            clip
         )
 
     return caption_clips
+
 
 # ============================================================
 # CREATE BRAND
@@ -791,129 +676,184 @@ def create_brand(
     duration
 ):
     """
-    Create the channel branding displayed
-    at the bottom of the video.
+    Create bottom branding.
     """
 
-    brand = TextClip(
-
-        text=BRAND_TEXT,
-
-        font_size=BRAND_FONT_SIZE,
-
-        color="white",
-
-        size=(
-
-            BRAND_WIDTH,
-
-            BRAND_HEIGHT
-
-        ),
-
-        method="caption"
-
-    )
-
-    brand = (
-
-        brand
-
-        .with_duration(
-
-            duration
-
+    return (
+        TextClip(
+            text=BRAND_TEXT,
+            font_size=BRAND_FONT_SIZE,
+            color="white",
+            size=(
+                BRAND_WIDTH,
+                BRAND_HEIGHT
+            ),
+            method="caption"
         )
-
+        .with_duration(duration)
         .with_position(
-
             (
-
                 "center",
-
                 BRAND_Y_POSITION
-
             )
-
         )
-
     )
 
-    return brand
-
-# ============================================================
-# COMPOSE VIDEO
-# ============================================================
-
-def compose_video(
-
-    background,
-
-    image_clips,
-
-    headline,
-
-    captions,
-
-    brand,
-
-    final_audio,
-
-    duration
-
+def create_videos(
+    visual_packages,
+    music_credits
 ):
     """
-    Assemble all visual elements into the
-    final video composition.
+    Generate finished videos for every knowledge package.
     """
 
-    video_layers = (
+    print("=" * 80)
+    print("VIDEO GENERATION")
+    print("=" * 80)
 
-        [background]
+    total = len(visual_packages)
 
-        + image_clips
+    completed = []
 
-        + [headline]
+    for index, knowledge in enumerate(
+        visual_packages,
+        start=1
+    ):
 
-        + captions
-
-        + [brand]
-
-    )
-
-    video = CompositeVideoClip(
-
-        video_layers,
-
-        size=(
-
-            VIDEO_WIDTH,
-
-            VIDEO_HEIGHT
-
+        title = knowledge.get(
+            "title",
+            "Untitled"
         )
 
-    )
+        print()
+        print("=" * 80)
+        print(f"[{index}/{total}] {title}")
+        print("=" * 80)
 
-    video = (
+        voice = None
+        music = None
+        final_audio = None
+        video = None
 
-        video
+        try:
 
-        .with_duration(
+            validate_package(
+                knowledge
+            )
 
-            duration
+            print("Creating background...")
+            create_background()
 
+            print("Creating thumbnail...")
+            create_thumbnail(title)
+
+            print("Loading narration...")
+            voice = load_voice()
+
+            print("Loading background music...")
+            music, music_file = load_background_music(
+                voice,
+                music_credits
+            )
+
+            print("Mixing audio...")
+            final_audio = create_final_audio(
+                voice,
+                music
+            )
+
+            duration = voice.duration
+
+            print("Preparing background clip...")
+
+            background = (
+                ImageClip(BACKGROUND_FILE)
+                .with_duration(duration)
+            )
+
+            print("Preparing image clips...")
+
+            image_clips = prepare_image_clips(
+                knowledge["scene_plan"],
+                duration
+            )
+
+            print("Creating headline...")
+            headline = create_headline(
+                title,
+                duration
+            )
+
+            print("Creating captions...")
+            captions = create_captions(
+                knowledge["script"],
+                duration
+            )
+
+            print("Creating branding...")
+            brand = create_brand(
+                duration
+            )
+
+            print("Compositing video...")
+
+            video = compose_video(
+                background,
+                image_clips,
+                headline,
+                captions,
+                brand,
+                final_audio,
+                duration
+            )
+
+            print("Exporting...")
+
+            export_video(
+                video
+            )
+
+            knowledge["video_file"] = OUTPUT_VIDEO_FILE
+            knowledge["thumbnail_file"] = THUMBNAIL_FILE
+            knowledge["background_music"] = music_file
+
+            print("Video completed successfully.")
+
+        except Exception as e:
+
+            print(f"Video generation failed: {e}")
+
+            knowledge["video_error"] = str(e)
+
+        finally:
+
+            try:
+
+                if video is not None:
+                    video.close()
+
+                if final_audio is not None:
+                    final_audio.close()
+
+                if voice is not None:
+                    voice.close()
+
+                if music is not None:
+                    music.close()
+
+            except Exception:
+                pass
+
+        completed.append(
+            knowledge
         )
 
-        .with_audio(
+    print()
+    print("=" * 80)
+    print("VIDEO GENERATION COMPLETE")
+    print("=" * 80)
 
-            final_audio
-
-        )
-
-    )
-
-    return video
+    return completed
 
 # ============================================================
 # EXPORT VIDEO
@@ -923,13 +863,11 @@ def export_video(
     video
 ):
     """
-    Export the final video to disk.
+    Export the final video.
     """
 
     print(
-
-        f"Exporting video to {OUTPUT_VIDEO_FILE}..."
-
+        f"Exporting {OUTPUT_VIDEO_FILE}..."
     )
 
     video.write_videofile(
@@ -944,12 +882,10 @@ def export_video(
 
         preset=EXPORT_PRESET,
 
-        threads=EXPORT_THREADS
+        threads=EXPORT_THREADS,
+
+        logger="bar"
 
     )
 
-    print(
-
-        "Video export completed."
-
-    )
+    print("Export complete.")
