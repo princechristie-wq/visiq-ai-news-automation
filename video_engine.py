@@ -122,68 +122,6 @@ def validate_package(knowledge):
 
 
 # ============================================================
-# PUBLIC FUNCTION
-# ============================================================
-
-def create_videos(
-    visual_packages,
-    music_credits
-):
-    """
-    Generate videos from all visual packages.
-
-    Returns:
-        list[dict]
-    """
-
-    print("=" * 80)
-    print("VIDEO GENERATION")
-    print("=" * 80)
-
-    total = len(visual_packages)
-
-    completed = []
-
-    for index, knowledge in enumerate(
-        visual_packages,
-        start=1
-    ):
-
-        print(
-            f"[{index}/{total}] {knowledge.get('title', 'Untitled')}"
-        )
-
-        try:
-
-            validate_package(
-                knowledge
-            )
-
-            completed.append(
-                knowledge
-            )
-
-        except Exception as e:
-
-            print(
-                f"Skipping package: {e}"
-            )
-
-            knowledge["video_error"] = str(e)
-
-            completed.append(
-                knowledge
-            )
-
-    print("=" * 80)
-    print(
-        f"Validated {len(completed)} package(s)"
-    )
-    print("=" * 80)
-
-    return completed
-
-# ============================================================
 # CREATE BACKGROUND
 # ============================================================
 
