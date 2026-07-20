@@ -1,4 +1,6 @@
 groq==0.31.0
+google-generativeai
+openai
 edge-tts
 moviepy
 Pillow
