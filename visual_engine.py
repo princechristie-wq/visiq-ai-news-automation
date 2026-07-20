@@ -1,7 +1,7 @@
-import os
-import requests
 import random
-from groq import Groq
+
+from ai_provider import generate_text
+from config import PRIMARY_MODEL
 
 # ============================================================
 # VISUAL ENGINE CONFIGURATION
@@ -16,32 +16,13 @@ IMAGE_HEIGHT = 1344
 IMAGE_MODEL = "flux"
 
 # ============================================================
-# CREATE GROQ CLIENT
-# ============================================================
-
-def get_api_key():
-
-    api_key = os.getenv("GROQ_API_KEY")
-
-    if not api_key:
-
-        raise ValueError(
-            "GROQ_API_KEY not found."
-        )
-
-    return api_key
-
-def create_client(api_key):
-
-    return Groq(
-        api_key=get_api_key()
-    )
-
-# ============================================================
 # SPLIT SCRIPT INTO SCENES
 # ============================================================
 
 def split_script_into_scenes(script):
+    """
+    Divide the narration into evenly sized scenes.
+    """
 
     words = script.split()
 
@@ -57,11 +38,8 @@ def split_script_into_scenes(script):
         start = i * words_per_scene
 
         if i == TOTAL_SCENES - 1:
-
             end = len(words)
-
         else:
-
             end = start + words_per_scene
 
         scene_text = " ".join(
@@ -72,6 +50,7 @@ def split_script_into_scenes(script):
 
     return scenes
 
+
 # ============================================================
 # MOTION TYPES
 # ============================================================
@@ -79,28 +58,26 @@ def split_script_into_scenes(script):
 MOTION_TYPES = [
 
     "zoom_in",
-
     "zoom_out",
-
     "pan_left",
-
     "pan_right",
-
     "tilt_up",
-
     "tilt_down",
-
     "push_in",
-
     "pull_out"
 
 ]
+
 
 # ============================================================
 # BUILD VISUAL PROMPT
 # ============================================================
 
 def build_visual_prompt(scene_text):
+    """
+    Build the prompt that decides which visual
+    should represent the narration.
+    """
 
     return f"""
 You are an expert cinematic storyboard artist for YouTube Shorts.
@@ -109,34 +86,40 @@ Narration:
 
 {scene_text}
 
-Your task is to decide the best visual for this narration.
+Decide the single best visual.
 
 Rules:
 
-- If real-world footage can represent the narration, choose "stock".
-- If the narration describes concepts, futuristic technology, AI, imaginary scenes, or anything difficult to film, choose "image".
+- Use STOCK when real footage exists.
+- Use IMAGE for AI concepts, futuristic technology,
+  impossible scenes or abstract ideas.
 - The visual must directly match the narration.
 - Search queries should contain only the essential keywords.
-- Image prompts must be cinematic, photorealistic, detailed, and contain no text, logos, or watermarks.
+- Image prompts must be cinematic.
+- Photorealistic.
+- Ultra detailed.
+- No text.
+- No watermark.
+- No logo.
 
-Return ONLY in exactly this format:
+Return EXACTLY:
 
 VISUAL_TYPE: stock OR image
 SEARCH_QUERY: ...
 IMAGE_PROMPT: ...
 
-Do not return any explanation.
-Do not add headings.
-Do not add markdown.
-Do not add extra text.
+Return nothing else.
 """
+
 # ============================================================
 # GENERATE VISUAL DECISION
 # ============================================================
 
 def generate_visual_decision(scene_text):
-
-    client = create_client()
+    """
+    Generate a visual decision for a single scene using
+    the configured AI provider.
+    """
 
     prompt = build_visual_prompt(
         scene_text
@@ -144,26 +127,15 @@ def generate_visual_decision(scene_text):
 
     try:
 
-        response = client.chat.completions.create(
-
-            model=LLM_MODEL,
-
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-
-        )
-
-        result = response.choices[0].message.content.strip()
+        result = generate_text(
+            prompt
+        ).strip()
 
     except Exception as e:
 
-        print("Failed to generate visual for scene.")
-
-        print(e)
+        print(
+            f"Failed to generate visual for scene: {e}"
+        )
 
         return {
 
@@ -171,7 +143,10 @@ def generate_visual_decision(scene_text):
 
             "search_query": "",
 
-            "image_prompt": "A cinematic photorealistic illustration matching the narration."
+            "image_prompt": (
+                "A cinematic, photorealistic illustration "
+                "matching the narration."
+            )
 
         }
 
@@ -187,60 +162,86 @@ def generate_visual_decision(scene_text):
 
     for line in result.splitlines():
 
+        line = line.strip()
+
         if line.startswith("VISUAL_TYPE:"):
 
-            visual["visual_type"] = line.replace(
-
-                "VISUAL_TYPE:",
-
-                ""
-
-            ).strip().lower()
+            visual["visual_type"] = (
+                line.replace(
+                    "VISUAL_TYPE:",
+                    ""
+                )
+                .strip()
+                .lower()
+            )
 
         elif line.startswith("SEARCH_QUERY:"):
 
-            visual["search_query"] = line.replace(
-
-                "SEARCH_QUERY:",
-
-                ""
-
-            ).strip()
+            visual["search_query"] = (
+                line.replace(
+                    "SEARCH_QUERY:",
+                    ""
+                )
+                .strip()
+            )
 
         elif line.startswith("IMAGE_PROMPT:"):
 
-            visual["image_prompt"] = line.replace(
+            visual["image_prompt"] = (
+                line.replace(
+                    "IMAGE_PROMPT:",
+                    ""
+                )
+                .strip()
+            )
 
-                "IMAGE_PROMPT:",
+    # --------------------------------------------------------
+    # Validation
+    # --------------------------------------------------------
 
-                ""
-
-            ).strip()
-
-    if visual["visual_type"] not in ["stock", "image"]:
+    if visual["visual_type"] not in (
+        "stock",
+        "image"
+    ):
 
         visual["visual_type"] = "image"
 
+    if (
+        visual["visual_type"] == "image"
+        and not visual["image_prompt"]
+    ):
+
+        visual["image_prompt"] = (
+            "A cinematic, photorealistic illustration "
+            "matching the narration."
+        )
+
     return visual
+
 # ============================================================
 # CREATE SCENE PLAN
 # ============================================================
 
 def create_scene_plan(script):
+    """
+    Create a complete scene-by-scene storyboard for the script.
+    """
 
-    scenes = split_script_into_scenes(
-        script
-    )
+    scenes = split_script_into_scenes(script)
 
     plan = []
 
     previous_motion = None
 
+    total_scenes = len(scenes)
+
+    print(f"Generating storyboard ({total_scenes} scenes)...")
+
     for scene_number, scene in enumerate(scenes, start=1):
 
-        visual = generate_visual_decision(
-            scene
-        )
+        print(f"  Scene {scene_number}/{total_scenes}")
+
+        visual = generate_visual_decision(scene)
 
         available_motions = [
 
@@ -276,22 +277,69 @@ def create_scene_plan(script):
 
     return plan
 
+
 # ============================================================
 # PUBLIC FUNCTION
 # ============================================================
 
 def generate_visual_plan(knowledge_packages):
+    """
+    Generate visual storyboards for all scripts.
+
+    Returns:
+        list[dict]: Knowledge packages with scene plans.
+    """
 
     visual_packages = []
 
-    for knowledge in knowledge_packages:
+    total = len(knowledge_packages)
 
-        knowledge["scene_plan"] = create_scene_plan(
-            knowledge["script"]
-        )
+    print("=" * 80)
+    print("GENERATING VISUAL PLANS...")
+    print("=" * 80)
+
+    for index, knowledge in enumerate(
+        knowledge_packages,
+        start=1
+    ):
+
+        print(f"[{index}/{total}] {knowledge['title']}")
+
+        try:
+
+            script = knowledge.get(
+                "script",
+                ""
+            )
+
+            if not script.strip():
+
+                raise ValueError(
+                    "Script is empty."
+                )
+
+            knowledge["scene_plan"] = create_scene_plan(
+                script
+            )
+
+        except Exception as e:
+
+            print(
+                f"Visual plan generation failed: {e}"
+            )
+
+            knowledge["scene_plan"] = []
+
+            knowledge["visual_error"] = str(e)
 
         visual_packages.append(
             knowledge
         )
+
+    print("=" * 80)
+    print(
+        f"Successfully generated {len(visual_packages)} visual plan(s)"
+    )
+    print("=" * 80)
 
     return visual_packages
