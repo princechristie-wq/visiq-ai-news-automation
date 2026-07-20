@@ -60,22 +60,30 @@ class AIProvider:
                 "Unsupported provider."
             )
 
-        response = self.client.chat.completions.create(
+        try:
 
-            model=PRIMARY_MODEL,
+            response = self.client.chat.completions.create(
 
-            temperature=temperature,
+                model=PRIMARY_MODEL,
 
-            max_tokens=max_tokens,
+                temperature=temperature,
 
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-        )
+                max_tokens=max_tokens,
 
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    }
+                ],
+            )
+
+        except Exception as e:
+
+            raise RuntimeError(
+                f"AI generation failed: {e}"
+            ) from e
+            
         return (
             response.choices[0]
             .message.content
