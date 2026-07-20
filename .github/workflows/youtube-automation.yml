@@ -4,13 +4,15 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '0 1 * * *'
-    - cron: '0 13 * * *'
-    - cron: '0 17 * * *'
-    - cron: '0 21 * * *'
+    # Run once every day at 01:00 UTC
+    # (06:30 IST)
+    - cron: "0 1 * * *"
+
 jobs:
   generate-content:
     runs-on: ubuntu-latest
+
+    timeout-minutes: 120
 
     steps:
       - name: Checkout Repository
@@ -20,44 +22,73 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
+
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
 
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
 
-      - name: Run Script
+      - name: Generate and Upload Videos
         env:
+          # ======================================================
+          # AI Providers
+          # ======================================================
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+          # ======================================================
+          # Image / Stock Providers
+          # ======================================================
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+
+          # ======================================================
+          # YouTube
+          # ======================================================
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+
+          PYTHONUNBUFFERED: "1"
+
         run: |
           python main.py
 
-      - name: Upload Files
+      - name: Upload Build Artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: visiq-ai-output
           path: |
-              topic.txt
-              script.txt
-              title.txt
-              description.txt
-              hashtags.txt
-              scene_prompts.txt
-              image_1.jpg
-              image_2.jpg
-              image_3.jpg
-              image_4.jpg
-              image_5.jpg
-              image_6.jpg
-              image_7.jpg
-              image_8.jpg
-              image_9.jpg
-              image_10.jpg
-              voice.mp3
-              background.jpg
-              thumbnail.jpg
-              final_video.mp4
-              
+            topic.txt
+            script.txt
+            title.txt
+            description.txt
+            hashtags.txt
+            scene_prompts.txt
+            image_1.jpg
+            image_2.jpg
+            image_3.jpg
+            image_4.jpg
+            image_5.jpg
+            image_6.jpg
+            image_7.jpg
+            image_8.jpg
+            image_9.jpg
+            image_10.jpg
+            voice.mp3
+            background.jpg
+            thumbnail.jpg
+            final_video.mp4
+          if-no-files-found: warn
