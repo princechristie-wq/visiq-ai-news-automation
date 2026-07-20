@@ -1,9 +1,12 @@
 import os
 import random
 import textwrap
+import asyncio
 
 import cv2
+import edge_tts
 import numpy as np
+import requests
 
 from moviepy import (
     AudioFileClip,
@@ -79,6 +82,29 @@ EXPORT_THREADS = 2
 BACKGROUND_FILE = "background.jpg"
 THUMBNAIL_FILE = "thumbnail.jpg"
 VOICE_FILE = "voice.mp3"
+
+# ------------------------------------------------------------
+# Voice Settings
+# ------------------------------------------------------------
+
+VOICE_NAME = "en-US-ChristopherNeural"
+
+VOICE_RATE = "+25%"
+
+# ------------------------------------------------------------
+# Image Generation Settings
+# ------------------------------------------------------------
+
+IMAGE_MODEL = "flux"
+
+IMAGE_WIDTH = 768
+
+IMAGE_HEIGHT = 1344
+
+IMAGE_TIMEOUT = 120
+
+USER_AGENT = "Mozilla/5.0"
+
 OUTPUT_VIDEO_FILE = "final_video.mp4"
 
 
@@ -120,6 +146,200 @@ def validate_package(knowledge):
             "Scene plan is empty."
         )
 
+# ============================================================
+# VOICE GENERATION
+# ============================================================
+
+async def _generate_voice_async(
+    script
+):
+    """
+    Generate narration using Microsoft Edge TTS.
+    """
+
+    communicate = edge_tts.Communicate(
+
+        text=script,
+
+        voice=VOICE_NAME,
+
+        rate=VOICE_RATE
+
+    )
+
+    await communicate.save(
+        VOICE_FILE
+    )
+
+
+def generate_voice(
+    script
+):
+    """
+    Generate narration audio.
+
+    Returns:
+        str : voice.mp3
+    """
+
+    if not script.strip():
+
+        raise ValueError(
+            "Script is empty."
+        )
+
+    print("Generating narration...")
+
+    asyncio.run(
+        _generate_voice_async(
+            script
+        )
+    )
+
+    if not os.path.exists(
+        VOICE_FILE
+    ):
+
+        raise RuntimeError(
+            "Voice generation failed."
+        )
+
+    print("Narration created.")
+
+    return VOICE_FILE
+
+# ============================================================
+# IMAGE GENERATION
+# ============================================================
+
+def generate_images(
+    scene_plan
+):
+    """
+    Generate one image for every scene.
+
+    Images are saved as:
+
+        image_1.jpg
+        image_2.jpg
+        ...
+
+    """
+
+    if not scene_plan:
+
+        raise ValueError(
+            "Scene plan is empty."
+        )
+
+    print("Generating images...")
+
+    for scene in scene_plan:
+
+        scene_number = scene.get(
+            "scene_number"
+        )
+
+        prompt = scene.get(
+            "image_prompt",
+            ""
+        ).strip()
+
+        if not prompt:
+
+            raise ValueError(
+                f"Scene {scene_number} has no image prompt."
+            )
+
+        quality_prompt = (
+            "masterpiece, best quality, "
+            "ultra detailed, photorealistic, "
+            "cinematic lighting, "
+            "professional photography, "
+            "8k, HDR, realistic textures, "
+            "award winning photography, "
+            + prompt
+        )
+
+        negative_prompt = (
+            "people, person, humans, face, portrait, "
+            "hands, body, crowd, meeting, office, "
+            "logo, watermark, text, cartoon, painting"
+        )
+
+        final_prompt = (
+            quality_prompt
+            + ", "
+            + negative_prompt
+        )
+
+        seed = random.randint(
+            1,
+            999999999
+        )
+
+        url = (
+
+            "https://image.pollinations.ai/prompt/"
+
+            + requests.utils.quote(
+                final_prompt
+            )
+
+            + f"?model={IMAGE_MODEL}"
+
+            + f"&seed={seed}"
+
+            + f"&width={IMAGE_WIDTH}"
+
+            + f"&height={IMAGE_HEIGHT}"
+
+            + "&nologo=true"
+
+        )
+
+        print(
+            f"Generating image {scene_number}"
+        )
+
+        response = requests.get(
+
+            url,
+
+            timeout=IMAGE_TIMEOUT,
+
+            headers={
+
+                "User-Agent": USER_AGENT
+
+            }
+
+        )
+
+        if response.status_code != 200:
+
+            raise RuntimeError(
+                f"Image generation failed for Scene {scene_number}"
+            )
+
+        filename = (
+            f"image_{scene_number}.jpg"
+        )
+
+        with open(
+            filename,
+            "wb"
+        ) as file:
+
+            file.write(
+                response.content
+            )
+
+        print(
+            f"Saved {filename}"
+        )
+
+    print("Image generation complete.")
 
 # ============================================================
 # CREATE BACKGROUND
@@ -725,12 +945,28 @@ def create_videos(
             print("Creating background...")
             create_background()
 
+            print("Generating images...")
+
+            generate_images(
+            knowledge["scene_plan"]
+            )
+
             print("Creating thumbnail...")
-            create_thumbnail(title)
+
+            create_thumbnail(
+            title
+            )
+
+            print("Generating narration...")
+
+            generate_voice(
+            knowledge["script"]
+            )
 
             print("Loading narration...")
-            voice = load_voice()
 
+            voice = load_voice()
+            
             print("Loading background music...")
             music, music_file = load_background_music(
                 voice,
