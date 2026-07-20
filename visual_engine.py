@@ -61,10 +61,8 @@ MOTION_TYPES = [
     "zoom_out",
     "pan_left",
     "pan_right",
-    "tilt_up",
-    "tilt_down",
-    "push_in",
-    "pull_out"
+    "pan_up",
+    "pan_down"
 
 ]
 
