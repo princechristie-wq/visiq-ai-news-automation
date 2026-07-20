@@ -1,10 +1,9 @@
-from groq import Groq
+from ai_provider import generate_text
+from config import PRIMARY_MODEL
 
 # ============================================================
 # SCRIPT ENGINE CONFIGURATION
 # ============================================================
-
-MODEL_NAME = "llama-3.3-70b-versatile"
 
 TARGET_WORDS = 200
 
@@ -13,99 +12,126 @@ VOICE_STYLE = "Energetic"
 CHANNEL_NAME = "Visiq AI"
 
 # ============================================================
-# CREATE GROQ CLIENT
-# ============================================================
-
-def create_client(api_key):
-
-    return Groq(
-        api_key=api_key
-    )
-
-# ============================================================
 # BUILD SCRIPT PROMPT
 # ============================================================
 
 def build_script_prompt(knowledge):
+    """
+    Build the prompt that will be sent to the configured
+    AI provider.
+    """
 
     return f"""
-You are a professional YouTube Shorts writer.
+You are a professional YouTube Shorts script writer.
 
-Channel:
+Channel Name:
 {CHANNEL_NAME}
+
+Target Audience:
+People interested in Artificial Intelligence, Automation,
+Technology and Future Innovations.
 
 Topic:
 {knowledge['title']}
 
-Description:
+Source Description:
 {knowledge['description']}
 
-Write a completely original YouTube Shorts script.
+Instructions:
+
+Write a completely original YouTube Shorts narration.
 
 Requirements:
 
-- Around {TARGET_WORDS} words
-- Strong hook in the first sentence
-- Conversational English
-- Explain the technology clearly
-- Focus on facts
-- Avoid speculation
-- End with:
+• Around {TARGET_WORDS} words.
+• Start with an extremely strong hook.
+• Sound natural and conversational.
+• Explain the technology simply.
+• Only use factual information from the source.
+• Never invent facts.
+• Never speculate.
+• Never mention that you are an AI.
+• Keep the pacing fast.
+• Make every sentence valuable.
+• Finish with:
 
-Subscribe to Visiq AI for daily AI updates.
+"Subscribe to Visiq AI for daily AI updates."
 
-Return narration only.
+Return ONLY the narration.
+
+Do not include:
+- Titles
+- Bullet points
+- Stage directions
+- Markdown
+- Explanations
 """
 
 # ============================================================
 # GENERATE SCRIPT
 # ============================================================
 
-def generate_script(knowledge, api_key):
+def generate_script(knowledge):
+    """
+    Generate a YouTube Shorts script using the configured
+    AI provider.
+    """
 
-    client = create_client(api_key)
+    prompt = build_script_prompt(knowledge)
 
-    prompt = build_script_prompt(
-        knowledge
-    )
-
-    response = client.chat.completions.create(
-
-        model=MODEL_NAME,
-
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-
-    )
-
-    script = response.choices[0].message.content.strip()
+    script = generate_text(prompt).strip()
 
     knowledge["script"] = script
 
     return knowledge
 
+
 # ============================================================
 # PUBLIC FUNCTION
 # ============================================================
 
-def generate_scripts(knowledge_packages, api_key):
+def generate_scripts(knowledge_packages):
+    """
+    Generate scripts for all researched topics.
+
+    Returns:
+        list[dict]: Knowledge packages with generated scripts.
+    """
 
     scripts = []
 
-    for knowledge in knowledge_packages:
+    total = len(knowledge_packages)
 
-        script = generate_script(
-            knowledge,
-            api_key
-        )
+    print("=" * 80)
+    print("GENERATING SCRIPTS...")
+    print("=" * 80)
 
-        scripts.append(
-            script
-        )
+    for index, knowledge in enumerate(knowledge_packages, start=1):
+
+        print(f"[{index}/{total}] {knowledge['title']}")
+
+        try:
+
+            script = generate_script(
+                knowledge
+            )
+
+            scripts.append(script)
+
+        except Exception as e:
+
+            print(
+                f"Script generation failed: {e}"
+            )
+
+            knowledge["script"] = ""
+
+            knowledge["script_error"] = str(e)
+
+            scripts.append(knowledge)
+
+    print("=" * 80)
+    print(f"Successfully generated {len(scripts)} script(s)")
+    print("=" * 80)
 
     return scripts
-
