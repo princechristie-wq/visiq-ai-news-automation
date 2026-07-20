@@ -108,3 +108,4 @@ def generate_scripts(knowledge_packages, api_key):
         )
 
     return scripts
+
