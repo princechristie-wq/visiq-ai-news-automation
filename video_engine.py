@@ -637,6 +637,49 @@ def create_brand(
         )
     )
 
+# ============================================================
+# COMPOSE VIDEO
+# ============================================================
+
+def compose_video(
+    background,
+    image_clips,
+    headline,
+    captions,
+    brand,
+    final_audio,
+    duration
+):
+    """
+    Combine all visual and audio elements into the final video.
+    """
+
+    clips = [background]
+
+    clips.extend(image_clips)
+
+    clips.append(headline)
+
+    clips.extend(captions)
+
+    clips.append(brand)
+
+    video = CompositeVideoClip(
+        clips,
+        size=(
+            VIDEO_WIDTH,
+            VIDEO_HEIGHT
+        )
+    )
+
+    video = (
+        video
+        .with_duration(duration)
+        .with_audio(final_audio)
+    )
+
+    return video
+
 def create_videos(
     visual_packages,
     music_credits
