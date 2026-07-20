@@ -1,1088 +1,150 @@
-import os
-from groq import Groq
-import asyncio
-import edge_tts
-import textwrap
-import random
-import numpy as np
-import cv2
-import requests
-import moviepy
+"""
+============================================================
+Visiq AI
+Main Application
+Version : 2.0.0
+============================================================
 
-from datetime import datetime, timezone
+Master Workflow Controller
 
-print("MOVIEPY VERSION:", 
-moviepy.__version__)
+This file coordinates the complete workflow.
 
-from moviepy import (
-    AudioFileClip,
-    ImageClip,
-    TextClip,
-    CompositeVideoClip,
-    CompositeAudioClip,
-    afx,
+Business logic belongs inside the individual engines.
+
+Workflow
+
+1. Discover Trending Topics
+2. Research Topics
+3. Generate Script
+4. Generate Visual Plan
+5. Generate Video
+6. Upload to YouTube
+"""
+
+from pathlib import Path
+import traceback
+
+from config import (
+    PROJECT_NAME,
+    PROJECT_VERSION,
+    OUTPUT_DIR,
 )
 
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
+from trend_engine import get_trending_topics
 
-client = Groq(
-api_key=os.environ["GROQ_API_KEY"]
-)
+from research_engine import research_topics
 
-music_credits = {
-    "Music_1.mp3":
-"""Music: Robots and Aliens - Joel Cummins 01
-License: YouTube Audio Library""",
+from script_engine import generate_scripts
 
-    "Music_2.mp3":
-"""Music: Blue Moon - JVNA
-License: YouTube Audio Library""",
+from visual_engine import generate_visual_plan
 
-    "Music_3.mp3":
-"""Music: Giving Up - JVNA
-License: YouTube Audio Library""",
+from video_engine import create_videos
 
-    "Music_4.mp3":
-"""Music: News Room News - Spence
-License: YouTube Audio Library""",
+from youtube_engine import upload_to_youtube
 
-    "Music_5.mp3":
-"""Music: Odd News - Twin Musicom
-Odd News by Twin Musicom is licensed under a Creative Commons Attribution 4.0 licence.
-https://creativecommons.org/licenses/by/4.0/
 
-Artist: http://www.twinmusicom.org/
-License: YouTube Audio Library""",
+# ==========================================================
+# Helper Functions
+# ==========================================================
 
-    "Music_6.mp3":
-"""Music: News Theme 2 - Audionautix
-News Theme 2 by Audionautix is licensed under a Creative Commons Attribution 4.0 licence.
-https://creativecommons.org/licenses/by/4.0/
+def print_banner():
 
-Artist: http://audionautix.com/
-License: YouTube Audio Library""",
-
-    "Music_7.mp3":
-"""Music: News Theme 1 - Audionautix
-News Theme 1 by Audionautix is licensed under a Creative Commons Attribution 4.0 licence.
-https://creativecommons.org/licenses/by/4.0/
-
-Artist: http://audionautix.com/
-License: YouTube Audio Library""",
-
-    "Music_8.mp3":
-"""Music: Newsreel - Max Surla_Media Right Productions
-License: YouTube Audio Library""",
-
-    "Music_9.mp3":
-"""Music: Newsroom - Riot
-License: YouTube Audio Library"""
-}
-
-print("Starting...")
-
-import urllib.request
-
-for i in range(1, 10):
-
-    url = f"https://github.com/princechristie-wq/visiq-ai-news-automation/releases/download/Music-v1/Music_{i}.mp3"
-
-    urllib.request.urlretrieve(
-        url,
-        f"Music_{i}.mp3"
-    )
-
-    print(f"Downloaded Music_{i}.mp3")
-    
-async def create_voice(script):
-
-    communicate = edge_tts.Communicate(
-        text=script,
-        voice="en-US-ChristopherNeural",
-        rate="+25%"
-    )
-
-    await communicate.save(
-        "voice.mp3"
-    )
-
-# =====================================
-# YOUTUBE TRENDING AI VIDEOS
-# =====================================
-
-def get_youtube_trending_topics():
-
+    print("\n" + "=" * 80)
+    print(f"{PROJECT_NAME}  v{PROJECT_VERSION}")
     print("=" * 80)
-    print("SEARCHING YOUTUBE FOR TRENDING AI VIDEOS...")
+    print("Visiq AI Automation Pipeline")
     print("=" * 80)
 
-    API_KEY = os.environ["YOUTUBE_API_KEY"]
 
-    keywords = [
+def save_text(filename, content):
 
-        "AI News",
-        "Artificial Intelligence News",
-        "OpenAI News",
-        "ChatGPT News",
-        "Gemini AI News",
-        "Claude AI News",
-        "Anthropic News",
-        "Meta AI News",
-        "Llama AI News",
-        "NVIDIA AI News",
-        "Microsoft Copilot News",
-        "Perplexity AI News",
-        "DeepSeek AI News",
-        "Mistral AI News",
-        "xAI News",
-        "Grok AI News",
-        "Sora AI News",
-        "Runway AI News",
-        "AI Breakthrough",
-        "AI Announcement",
-        "AI Update",
-        "AI Technology News",
-        "Machine Learning News",
-        "Generative AI News",
-        "Large Language Model",
-        "AI Robotics",
-        "AI Startup News",
-        "Semiconductor AI News",
-        "AI Research News",
-        "AI Daily News"
-    ]
-    videos = []
-    
-    seen_video_ids = set()
-    
-    for keyword in keywords:
+    path = OUTPUT_DIR / filename
 
-        print(f"Searching: {keyword}")
-
-        url = (
-            "https://www.googleapis.com/youtube/v3/search"
-            "?part=snippet"
-            "&type=video"
-            "&maxResults=5"
-            "&order=relevance"
-            "&relevanceLanguage=en"
-            f"&q={requests.utils.quote(keyword)}"
-            f"&key={API_KEY}"
-        )
-
-        response = requests.get(
-            url,
-            timeout=30
-        )
-
-        if response.status_code != 200:
-            print("Search failed:", response.text)
-            continue
-
-        data = response.json()
-
-        for item in data.get("items", []):
-
-            video_id = item["id"]["videoId"]
-
-            if video_id in seen_video_ids:
-                continue
-
-            seen_video_ids.add(video_id)
-
-            videos.append({
-                "title": item["snippet"]["title"],
-                "channel": item["snippet"]["channelTitle"],
-                "published": item["snippet"]["publishedAt"],
-                "videoId": video_id
-            })
-
-    # =====================================
-    # GET VIDEO STATISTICS
-    # =====================================
-    
-    video_ids = []
-
-    for video in videos:
-        video_ids.append(video["videoId"])
-
-    statistics = get_video_statistics(video_ids)
-
- 
-    print("\nLATEST AI VIDEOS\n")
-
-    for video in videos:
-
-        stats = statistics.get(
-            video["videoId"],
-            {}
-        )
-
-        views = stats.get("views", 0)
-        likes = stats.get("likes", 0)
-        comments = stats.get("comments", 0)
-
-        published = datetime.fromisoformat(
-            video["published"].replace("Z", "+00:00")
-        )
-
-        hours_old = (
-            datetime.now(timezone.utc) - published
-        ).total_seconds() / 3600
-
-        freshness_bonus = 0
-
-        if hours_old <= 24:
-            freshness_bonus = 150000
-
-        elif hours_old <= 48:
-            freshness_bonus = 100000
-
-        elif hours_old <= 72:
-            freshness_bonus = 60000
-
-        elif hours_old <= 168:
-            freshness_bonus = 25000
-        authority_bonus = 0
-
-        channel = video["channel"].lower()
-
-        if "openai" in channel:
-            authority_bonus = 40000
-
-        elif "google" in channel:
-            authority_bonus = 35000
-
-        elif "anthropic" in channel:
-            authority_bonus = 35000
-
-        elif "nvidia" in channel:
-            authority_bonus = 30000
-
-        elif "matt wolfe" in channel:
-            authority_bonus = 20000
-
-        elif "futurepedia" in channel:
-            authority_bonus = 15000
-
-        elif "ai daily brief" in channel:
-            authority_bonus = 15000
-
-        elif "ai revolution" in channel:
-            authority_bonus = 15000
-
-        trend_score = (
-            views
-            + (likes * 20)
-            + (comments * 50)
-            + freshness_bonus
-            + authority_bonus
-        )
-
-        video["views"] = views
-        video["likes"] = likes
-        video["comments"] = comments
-        video["trend_score"] = trend_score
-        video["freshness_bonus"] = freshness_bonus
-        video["authority_bonus"] = authority_bonus
-        video["hours_old"] = round(hours_old, 1)
-
-    videos.sort(
-        key=lambda x: x["trend_score"],
-        reverse=True
-    )
-
-    print("\nTOP TRENDING AI VIDEOS\n")
-
-    for video in videos[:10]:
-
-        print("-" * 80)
-        print(video["title"])
-        print(video["channel"])
-        print("Trend Score:", video["trend_score"])
-        print("Views:", video["views"])
-        print("Likes:", video["likes"])
-        print("Comments:", video["comments"])
-        print("Hours Old:", video["hours_old"])
-        print("Freshness Bonus:", video["freshness_bonus"])
-        print("Authority Bonus:", video["authority_bonus"])
-    
-    return videos
-# =====================================
-# GET VIDEO STATISTICS
-# =====================================
-
-def get_video_statistics(video_ids):
-
-    API_KEY = os.environ["YOUTUBE_API_KEY"]
-
-    stats = {}
-
-    # Process IDs in batches of 50
-    for i in range(0, len(video_ids), 50):
-
-        batch = video_ids[i:i + 50]
-
-        ids = ",".join(batch)
-
-        print("=" * 80)
-        print(f"Processing batch {i//50 + 1}")
-        print(f"Videos in batch: {len(batch)}")
-
-        url = (
-            "https://www.googleapis.com/youtube/v3/videos"
-            "?part=statistics"
-            f"&id={ids}"
-            f"&key={API_KEY}"
-        )
-
-        response = requests.get(
-            url,
-            timeout=30
-        )
-
-        if response.status_code != 200:
-
-            print("Statistics API Error")
-            print(response.text)
-            continue
-
-        data = response.json()
-
-        for item in data.get("items", []):
-
-            stats[item["id"]] = {
-
-                "views": int(
-                    item["statistics"].get(
-                        "viewCount",
-                        0
-                    )
-                ),
-
-                "likes": int(
-                    item["statistics"].get(
-                        "likeCount",
-                        0
-                    )
-                ),
-
-                "comments": int(
-                    item["statistics"].get(
-                        "commentCount",
-                        0
-                    )
-                )
-
-            }
-
-    return stats
-def generate_images():
-
-    prompts = scene_prompts.splitlines()
-
-    print(f"Found {len(prompts)} prompts")
-
-    for i, prompt in enumerate(prompts, start=1):
-        
-        print("=" * 80)
-        print(f"IMAGE {i}")
-        print(prompt)
-        print("=" * 80)
-
-        print(f"Generating image {i}")
-
-        quality_prompt = (
-            "masterpiece, best quality, ultra detailed, "
-            "photorealistic, cinematic lighting, "
-            "professional photography, sharp focus, "
-            "8k, HDR, realistic textures, "
-            "high contrast, dramatic lighting, "
-            "award winning photography, "
-            + prompt
-        )
-        
-               
-        seed = random.randint(1, 999999999)
-        negative_prompt = """
-        technology only,
-        AI hardware,
-        server racks,
-        GPU clusters,
-        data centers,
-        industrial robotics,
-        quantum computers,
-
-        NO humans,
-        NO human face,
-        NO portrait,
-        NO selfie,
-        NO person,
-        NO people,
-        NO scientist,
-        NO researcher,
-        NO engineer,
-        NO doctor,
-        NO eyes,
-        NO hands,
-        NO body,
-        NO office,
-        NO meeting,
-        NO classroom,
-        NO crowd,
-        NO text,
-        NO logo,
-        NO watermark,
-        NO illustration,
-        NO painting,
-        NO cartoon
-        """
-
-        quality_prompt = quality_prompt + ", " + negative_prompt
-        
-        
-
-        url = (
-            "https://image.pollinations.ai/prompt/"
-            + requests.utils.quote(quality_prompt)
-            + f"?model=flux&seed={seed}&width=768&height=1344&nologo=true"
-        )       
-        response = requests.get(
-            url,
-            timeout=120,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            }
-        )
-
-        if response.status_code == 200:
-
-            with open(
-                f"image_{i}.jpg",
-                "wb"
-            ) as f:
-
-                f.write(
-                    response.content
-                )
-
-            print(
-                f"Downloaded image_{i}.jpg"
-            )
-
-        else:
-
-            print(
-                f"Failed image {i} - Status Code: {response.status_code}"
-            )
-
-
-
-
-def create_video(topic):
-
-    audio = AudioFileClip("voice.mp3")
-
-    music_files = [
-        "Music_1.mp3",
-        "Music_2.mp3",
-        "Music_3.mp3",
-        "Music_4.mp3",
-        "Music_5.mp3",
-        "Music_6.mp3",
-        "Music_7.mp3",
-        "Music_8.mp3",
-        "Music_9.mp3"
-    ]
-
-    music_file = random.choice(music_files)
-
-    selected_music = os.path.basename(
-        music_file
-    )
-
-    music_credit = music_credits[
-        selected_music
-    ]
-
-    print(
-        "Selected Music:",
-        selected_music
-    )
-    music = AudioFileClip(
-        music_file
-    )
-
-    music = music.with_effects(
-        [
-            afx.AudioLoop(
-                duration=audio.duration
-            )
-        ]
-    )
-
-    music = music.with_volume_scaled(
-    0.12
-    )
-
-    final_audio = CompositeAudioClip(
-        [music, audio]
-    )
-    
-    create_background()
-    background = (
-        ImageClip("background.jpg")
-        .with_duration(audio.duration)
-    )
-
-    with open(
-        "scene_prompts.txt",
-        "r",
+    path.write_text(
+        content,
         encoding="utf-8"
-    ) as f:
-        scenes = f.read().splitlines()
-
-    print("Scenes loaded:", len(scenes))
-
-    image_clips = []
-
-    scene_duration = audio.duration / max(
-        len(scenes),
-        1
-    )
-    for index, scene in enumerate(scenes):
-
-        image_file = f"image_{index + 1}.jpg"
-
-        if os.path.exists(image_file):
-
-            print("Using image:", image_file)
-
-            img = (
-                ImageClip(image_file)
-               .resized(height=1450)
-               .resized(
-                   lambda t: 1 + 0.12 * t / scene_duration
-               )    
-                .with_start(index * scene_duration)
-                .with_duration(scene_duration)
-                .with_position(("center", 220))
-            )
-
-            image_clips.append(img)
-
-        else:
-
-            print("Missing image:", image_file)
-
-    # ==========================
-    # HEADLINE
-    # ==========================
-
-    headline = TextClip(
-        text=topic,
-        font_size=48,
-        color="white",
-        size=(1000, 200),
-        method="caption"
     )
 
-    headline = (
-        headline
-        .with_duration(audio.duration)
-        .with_position(("center", 60))
-    )
-    words = script.split()
+    print(f"Saved : {filename}")
 
-    caption_clips = []
 
-    chunk_size = 2
+def verify_file(filepath):
 
-    duration_per_word = (
-        audio.duration * 0.95
-    ) / max(
-        len(words),
-        1
-    )
+    file = Path(filepath)
 
-    for i in range(
-        0,
-        len(words),
-        chunk_size
-    ):
+    if not file.exists():
 
-        caption_text = " ".join(
-            words[i:i + chunk_size]
+        raise FileNotFoundError(
+            f"Missing file : {filepath}"
         )
 
-        start_time = (
-            i * duration_per_word
+    if file.stat().st_size == 0:
+
+        raise RuntimeError(
+            f"Empty file : {filepath}"
         )
 
-        clip_duration = (
-            len(words[i:i + chunk_size])
-            * duration_per_word
+    return file
+
+
+# ==========================================================
+# Main Pipeline
+# ==========================================================
+
+def run_pipeline():
+
+    print_banner()
+
+    print("\nSTEP 1 : Discovering Trending AI Topics\n")
+
+    topics = get_trending_topics()
+
+    if not topics:
+
+        raise RuntimeError(
+            "No trending topics found."
         )
 
-        caption = TextClip(
-            text=caption_text,
-            font_size=95,
-            color="white",
-            stroke_color="black",
-            stroke_width=5,
-            size=(950, 250),
-            method="caption"
+    print(f"Topics Found : {len(topics)}")
+
+    print("\nSTEP 2 : Researching Topics\n")
+
+    research = research_topics(
+        topics
+    )
+
+    if not research:
+
+        raise RuntimeError(
+            "Research engine returned no data."
         )
 
-        caption = (
-            caption
-            .with_start(start_time)
-            .with_duration(clip_duration)
-            .with_position(("center", 980))
+    print("Research Complete")
+
+    print("\nSTEP 3 : Generating Scripts\n")
+
+    scripts = generate_scripts(
+        research
+    )
+
+    if not scripts:
+
+        raise RuntimeError(
+            "Script generation failed."
         )
 
-        caption_clips.append(
-            caption
+    print("Scripts Generated")
+
+    print("\nSTEP 4 : Generating Visual Storyboards\n")
+
+    visual_plan = generate_visual_plan(
+        scripts
+    )
+
+    if not visual_plan:
+
+        raise RuntimeError(
+            "Visual plan generation failed."
         )
-    # ==========================
-    # BRAND
-    # ==========================
 
-    brand = TextClip(
-        text="VISIQ AI",
-        font_size=55,
-        color="white",
-        size=(1080, 200),
-        method="caption"
-    )
-
-    brand = (
-        brand
-        .with_duration(audio.duration)
-        .with_position(("center", 1760))
-    )
-
-    # ==========================
-    # COMPOSITION
-    # ==========================
-
-    final_video = CompositeVideoClip(
-        [background]
-        + image_clips
-        + [headline]
-        + caption_clips
-        + [brand],
-        size=(1080, 1920)
-    )
-
-    final_video = final_video.with_audio(final_audio)
-
-    final_video.write_videofile(
-        "final_video.mp4",
-        fps=24,
-        codec="libx264",
-        audio_codec="aac",
-        preset="ultrafast",
-        threads=2
-    )     
-
-
-def upload_to_youtube():
-
-    creds = Credentials(
-        None,
-        refresh_token=os.environ["YOUTUBE_REFRESH_TOKEN"],
-        token_uri="https://oauth2.googleapis.com/token",
-        client_id=os.environ["YOUTUBE_CLIENT_ID"],
-        client_secret=os.environ["YOUTUBE_CLIENT_SECRET"]
-    )
-
-    youtube = build(
-        "youtube",
-        "v3",
-        credentials=creds
-    )
-
-    request = youtube.videos().insert(
-        part="snippet,status,paidProductPlacementDetails",
-        body={
-            "snippet": {
-                "title": title,
-                "description": final_description,
-                "tags": hashtags.split(),
-                "categoryId": "28",
-                "defaultLanguage": "en",
-                "defaultAudioLanguage": "en"
-            },
-            "status": {
-                "privacyStatus": "private",
-                "selfDeclaredMadeForKids": False,
-                "containsSyntheticMedia": True
-            },
-            "paidProductPlacementDetails": {
-                "hasPaidProductPlacement": False
-            }
-        },
-        media_body=MediaFileUpload(
-            "final_video.mp4",
-            resumable=True
-        )
-    )
-
-    response = request.execute()
-
-    print(
-        "YOUTUBE VIDEO ID:",
-        response["id"]
-    )
-
-# =====================================
-
-# TOPIC
-
-# =====================================
-
-topic_response = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
-    messages=[
-        {
-            "role": "user",
-            "content": """
-You are an expert YouTube Shorts creator.
-
-Generate ONE viral AI news headline.
-
-Rules:
-- 6 to 12 words only
-- Create curiosity
-- Create urgency
-- Sound like a YouTube Shorts title
-- No colons
-- No quotation marks
-- No corporate language
-- No clickbait that is false
-- Return headline only
-
-Good examples:
-
-Google Just Changed Search Forever
-
-OpenAI Reveals Its Most Powerful AI Yet
-
-This New AI Tool Is Going Viral
-
-Claude AI Beats Expectations Again
-
-Nvidia's Latest AI Chip Breaks Records
-"""
-        }
-    ]
-)
-
-topic = topic_response.choices[0].message.content.strip()
-# =====================================
-
-# SCRIPT
-
-# =====================================
-
-script_response = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
-    messages=[
-        {
-            "role": "user",
-            "content": f"""
-You are a professional AI news presenter creating a YouTube Shorts narration.
-
-TOPIC:
-{topic}
-
-Requirements:
-
-- 180 to 220 words
-- Strong hook in the first sentence
-- Sound energetic and conversational
-- Use short punchy sentences
-- Explain what happened
-- Explain why it matters
-- Focus on facts
-- Avoid corporate language
-- Avoid exaggerated claims
-- Avoid speculation
-- Do NOT invent facts
-- Do NOT include scene descriptions
-- Do NOT include visual instructions
-- Do NOT use parentheses
-- Narration only
-
-IMPORTANT:
-
-- Focus on AI technology, not the people behind it.
-- Never use words like:
-  - scientist
-  - scientists
-  - researcher
-  - researchers
-  - engineer
-  - engineers
-  - doctor
-  - doctors
-  - developer
-  - developers
-  - team
-  - teams
-- Instead, describe:
-  - AI systems
-  - AI models
-  - GPU clusters
-  - Supercomputers
-  - Data centers
-  - Semiconductor technology
-  - AI infrastructure
-  - Cloud computing
-  - Robotics
-  - AI hardware
-  - Industrial automation
-- The narration should describe what the technology does, not who created it.
-
-Structure:
-
-1. Hook
-2. What happened
-3. Why it matters
-4. Future impact
-5. Call to action
-
-End with exactly:
-
-Subscribe to Visiq AI for daily AI news.
-
-Return narration only.
-"""
-        }
-    ]
-)
-
-script = script_response.choices[0].message.content.strip()
-# =====================================
-# SCENE PROMPTS
-# =====================================
-
-scene_response = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
-    messages=[
-        {
-            "role": "user",
-            "content": f"""
-You are one of the world's best AI Image Prompt Engineers.
-
-TOPIC:
-{topic}
-
-SCRIPT:
-{script}
-
-Read the script carefully.
-
-Your task is NOT to illustrate people.
-
-Your task is to illustrate ONLY physical technology and environments.
-
-Generate exactly 10 image prompts.
-
-Each prompt MUST contain ONLY objects, machines or environments.
-
-Allowed subjects ONLY:
-
-- AI data centers
-- GPU server racks
-- Semiconductor fabrication machines
-- AI processors
-- Motherboards
-- Circuit boards
-- Fiber optic cables
-- Quantum computers
-- Cooling systems
-- Cloud infrastructure
-- Network switches
-- Server rooms
-- Robotic manufacturing arms
-- Factory automation equipment
-- Autonomous vehicles (no driver visible)
-- Satellites
-- Space communication equipment
-- Cybersecurity monitoring screens
-- Holographic dashboards
-- AI hardware
-- Laboratory equipment (empty)
-- Industrial machinery
-- Computer hardware
-- Digital infrastructure
-
-IMPORTANT OBJECT-ONLY RULE
-
-Every generated image must show technology operating by itself.
-
-All facilities must be completely empty.
-
-Use words such as:
-
-- unmanned
-- autonomous
-- empty facility
-- no personnel visible
-- unattended
-- fully automated
-- machine-only
-- equipment-only
-- infrastructure only
-
-Never describe a place where a person could naturally appear.
-
-If a satellite is shown, show only the satellite and ground equipment.
-
-If a laboratory is shown, show only laboratory equipment.
-
-If a factory is shown, show only robotic machinery.
-
-If a control room is shown, show only monitors, servers and equipment.
-
-Every image must look like an empty high-tech facility.
-
-Forbidden subjects:
-
-- Humans
-- Human faces
-- Portraits
-- Eyes
-- Hands
-- Bodies
-- Scientists
-- Engineers
-- Researchers
-- Doctors
-- Office workers
-- Meetings
-- Conference rooms
-- Classrooms
-- Crowds
-- Human silhouettes
-- Human shadows
-- Human reflections
-
-Every prompt must describe ONLY technology.
-
-If a prompt contains a person, rewrite it until there are no people.
-
-Return only the 10 prompts.
-
-"""
-        }
-    ]
-)
-
-scene_prompts = scene_response.choices[0].message.content.strip()
-# =====================================
-
-# METADATA
-
-# =====================================
-
-metadata_response = client.chat.completions.create(
-model="llama-3.3-70b-versatile",
-messages=[
-{
-"role": "user",
-"content": f"""
-Create YouTube Shorts metadata.
-
-TOPIC:
-{topic}
-
-Return exactly:
-
-TITLE: ...
-DESCRIPTION: ...
-HASHTAGS: ...
-"""
-}
-]
-)
-
-metadata = metadata_response.choices[0].message.content.strip()
-
-title = ""
-description = ""
-hashtags = ""
-
-selected_music = "Music_1.mp3"
-music_credit = music_credits[selected_music]
-for line in metadata.splitlines():
-
-    if line.startswith("TITLE:"):
-        title = line.replace(
-            "TITLE:",
-            ""
-        ).strip()
-
-    elif line.startswith("DESCRIPTION:"):
-        description = line.replace(
-            "DESCRIPTION:",
-            ""
-        ).strip()
-
-    elif line.startswith("HASHTAGS:"):
-        hashtags = line.replace(
-            "HASHTAGS:",
-            ""
-        ).strip()
-
-with open("topic.txt", "w", encoding="utf-8") as f:
-    f.write(topic)
-with open("script.txt", "w", encoding="utf-8") as f:
-    f.write(script)
-
-with open("title.txt", "w", encoding="utf-8") as f:
-    f.write(title)
-
-final_description = (
-    description
-    + "\n\n--------------------\n"
-    + "Music Credits\n"
-    + "--------------------\n"
-    + music_credit
-)
-
-with open("description.txt", "w", encoding="utf-8") as f:
-    f.write(final_description)
-
-with open("hashtags.txt", "w", encoding="utf-8") as f:
-    f.write(hashtags)
-
-with open("scene_prompts.txt", "w", encoding="utf-8") as f:
-    f.write(scene_prompts)
-    
-youtube_videos = get_youtube_trending_topics()
-
-asyncio.run(
-    create_voice(script)
-)
-
-generate_images()
-
-create_video(topic)
-
-# Verify the video was created successfully
-if not os.path.exists("final_video.mp4"):
-    raise Exception("final_video.mp4 was not created.")
-
-if os.path.getsize("final_video.mp4") < 1000000:
-    raise Exception("Video generation failed. Upload cancelled.")
-
-upload_to_youtube()
-
-print("VOICE CREATED")
-print("VIDEO UPLOADED")
-print("SUCCESS")
+    print("Storyboard Generated")
