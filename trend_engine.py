@@ -1,7 +1,8 @@
-import os
 import requests
 
 from datetime import datetime, timezone
+
+from config import YOUTUBE_API_KEY
 
 # ============================================================
 # TREND ENGINE CONFIGURATION
@@ -89,7 +90,9 @@ YOUTUBE_SEARCH_KEYWORDS = [
 # ============================================================
 # TREND SCORING CONFIGURATION
 # ============================================================
+
 VIDEOS_PER_DAY = 4
+
 VIEW_WEIGHT = 1
 LIKE_WEIGHT = 20
 COMMENT_WEIGHT = 50
@@ -126,18 +129,29 @@ AUTHORITY_CHANNELS = {
 # ============================================================
 
 def get_api_key():
+    """
+    Return the configured YouTube API key.
 
-    return API_KEY
+    Raises:
+        RuntimeError: If the API key is missing.
+    """
+
+    if not YOUTUBE_API_KEY:
+
+        raise RuntimeError(
+            "YOUTUBE_API_KEY is missing in config.py"
+        )
+
+    return YOUTUBE_API_KEY
+
+
+# ============================================================
+# GET VIDEO STATISTICS
+# ============================================================
 
 def get_video_statistics(video_ids):
 
-    API_KEY = os.getenv("YOUTUBE_API_KEY")
-
-    if not API_KEY:
-
-        raise RuntimeError(
-            "YOUTUBE_API_KEY environment variable is missing."
-        )
+    api_key = get_api_key()
 
     stats = {}
 
@@ -149,14 +163,14 @@ def get_video_statistics(video_ids):
         ids = ",".join(batch)
 
         print("=" * 80)
-        print(f"Processing batch {i//50 + 1}")
+        print(f"Processing batch {i // 50 + 1}")
         print(f"Videos in batch: {len(batch)}")
 
         url = (
             "https://www.googleapis.com/youtube/v3/videos"
             "?part=statistics"
             f"&id={ids}"
-            f"&key={API_KEY}"
+            f"&key={api_key}"
         )
 
         try:
@@ -181,6 +195,7 @@ def get_video_statistics(video_ids):
             print(response.text)
 
             continue
+
         data = response.json()
 
         for item in data.get("items", []):
@@ -207,7 +222,6 @@ def get_video_statistics(video_ids):
                         0
                     )
                 )
-
             }
 
     return stats
@@ -217,22 +231,29 @@ def get_video_statistics(video_ids):
 # ============================================================
 
 def get_authority_bonus(channel_name):
+    """
+    Return an authority bonus based on the channel name.
+    """
 
     channel = channel_name.lower()
 
     for authority, bonus in AUTHORITY_CHANNELS.items():
 
         if authority in channel:
-
             return bonus
 
     return 0
+
 
 # ============================================================
 # CALCULATE FRESHNESS BONUS
 # ============================================================
 
 def get_freshness_bonus(published_date):
+    """
+    Calculate a freshness bonus based on how recently
+    the video was published.
+    """
 
     published = datetime.fromisoformat(
         published_date.replace("Z", "+00:00")
@@ -243,33 +264,30 @@ def get_freshness_bonus(published_date):
     ).total_seconds() / 3600
 
     if hours_old <= 24:
-
         return FRESHNESS_24H, round(hours_old, 1)
 
-    elif hours_old <= 48:
-
+    if hours_old <= 48:
         return FRESHNESS_48H, round(hours_old, 1)
 
-    elif hours_old <= 72:
-
+    if hours_old <= 72:
         return FRESHNESS_72H, round(hours_old, 1)
 
-    elif hours_old <= 168:
-
+    if hours_old <= 168:
         return FRESHNESS_WEEK, round(hours_old, 1)
 
     return 0, round(hours_old, 1)
+
 
 # ============================================================
 # CALCULATE TREND SCORE
 # ============================================================
 
 def calculate_trend_score(video, statistics):
+    """
+    Calculate the overall trend score for a video.
+    """
 
-    stats = statistics.get(
-        video["videoId"],
-        {}
-    )
+    stats = statistics.get(video["videoId"], {})
 
     views = stats.get("views", 0)
     likes = stats.get("likes", 0)
@@ -301,17 +319,21 @@ def calculate_trend_score(video, statistics):
 
     return video
 
+
 # ============================================================
 # SEARCH YOUTUBE
 # ============================================================
 
 def get_youtube_trending_topics():
+    """
+    Search YouTube for recent AI-related videos.
+    """
 
     print("=" * 80)
     print("SEARCHING YOUTUBE...")
     print("=" * 80)
 
-    API_KEY = get_api_key()
+    api_key = get_api_key()
 
     videos = []
 
@@ -327,7 +349,7 @@ def get_youtube_trending_topics():
             "&order=date"
             "&relevanceLanguage=en"
             f"&q={requests.utils.quote(keyword)}"
-            f"&key={API_KEY}"
+            f"&key={api_key}"
         )
 
         try:
@@ -340,7 +362,6 @@ def get_youtube_trending_topics():
         except requests.RequestException as e:
 
             print(f"Network error: {e}")
-
             continue
 
         if response.status_code != 200:
@@ -351,7 +372,6 @@ def get_youtube_trending_topics():
             )
 
             print(response.text)
-
             continue
 
         data = response.json()
@@ -374,32 +394,54 @@ def get_youtube_trending_topics():
 # ============================================================
 
 def get_trending_topics():
+    """
+    Retrieve, score and return the top trending AI topics.
+
+    Returns:
+        list[dict]: Top VIDEOS_PER_DAY scored videos.
+    """
 
     videos = get_youtube_trending_topics()
+
+    # --------------------------------------------------------
+    # Remove duplicate videos
+    # --------------------------------------------------------
+
     unique_videos = {}
 
     for video in videos:
-
         unique_videos[video["videoId"]] = video
 
     videos = list(unique_videos.values())
-    
+
+    # --------------------------------------------------------
+    # No videos found
+    # --------------------------------------------------------
+
     if not videos:
 
-    print("No trending videos found.")
+        print("No trending videos found.")
 
-    return []
+        return []
+
+    # --------------------------------------------------------
+    # Collect video IDs
+    # --------------------------------------------------------
+
     video_ids = []
 
     for video in videos:
+        video_ids.append(video["videoId"])
 
-        video_ids.append(
-            video["videoId"]
-        )
+    # --------------------------------------------------------
+    # Retrieve statistics
+    # --------------------------------------------------------
 
-    statistics = get_video_statistics(
-        video_ids
-    )
+    statistics = get_video_statistics(video_ids)
+
+    # --------------------------------------------------------
+    # Calculate trend score
+    # --------------------------------------------------------
 
     scored_videos = []
 
@@ -410,13 +452,19 @@ def get_trending_topics():
             statistics
         )
 
-        scored_videos.append(
-            scored_video
-        )
+        scored_videos.append(scored_video)
+
+    # --------------------------------------------------------
+    # Highest score first
+    # --------------------------------------------------------
 
     scored_videos.sort(
-        key=lambda x: x["trend_score"],
+        key=lambda video: video["trend_score"],
         reverse=True
     )
+
+    # --------------------------------------------------------
+    # Return only required number of videos
+    # --------------------------------------------------------
 
     return scored_videos[:VIDEOS_PER_DAY]
