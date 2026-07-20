@@ -1,5 +1,6 @@
-import os
 import requests
+
+from config import YOUTUBE_API_KEY
 
 # ============================================================
 # RESEARCH ENGINE CONFIGURATION
@@ -11,35 +12,42 @@ MAX_DESCRIPTION_LENGTH = 3000
 # GET YOUTUBE API KEY
 # ============================================================
 
-import os
-
 def get_api_key():
+    """
+    Return the configured YouTube API key.
 
-    api_key = os.getenv("YOUTUBE_API_KEY")
+    Raises:
+        RuntimeError: If the API key is missing.
+    """
 
-    if not api_key:
+    if not YOUTUBE_API_KEY:
 
         raise RuntimeError(
-            "YOUTUBE_API_KEY environment variable is missing."
+            "YOUTUBE_API_KEY is missing in config.py"
         )
 
-    return api_key
+    return YOUTUBE_API_KEY
+
 
 # ============================================================
 # CREATE KNOWLEDGE PACKAGE
 # ============================================================
 
 def create_knowledge_package(topic):
+    """
+    Create the base knowledge package that will be
+    passed to later engines.
+    """
 
     return {
 
         # Trend Engine Data
         "video_id": topic["videoId"],
-        
+
         "video_url": (
             f"https://www.youtube.com/watch?v={topic['videoId']}"
         ),
-        
+
         "title": topic["title"],
         "channel": topic["channel"],
         "published": topic["published"],
@@ -62,12 +70,17 @@ def create_knowledge_package(topic):
 # ============================================================
 
 def research_topic(topic):
+    """
+    Retrieve additional information for a single
+    trending topic and return a populated
+    knowledge package.
+    """
 
     knowledge = create_knowledge_package(topic)
 
     details = get_video_details(
-        topic["videoId"],
-     )
+        topic["videoId"]
+    )
 
     knowledge["description"] = details.get(
         "description",
@@ -76,34 +89,38 @@ def research_topic(topic):
 
     return knowledge
 
+
 # ============================================================
 # PUBLIC FUNCTION
 # ============================================================
 
 def research_topics(topics):
+    """
+    Research a list of trending topics.
+    """
 
     knowledge_packages = []
 
     for topic in topics:
 
-        package = research_topic(
-            topic,
-        )
+        package = research_topic(topic)
 
-        knowledge_packages.append(
-            package
-        )
+        knowledge_packages.append(package)
 
     return knowledge_packages
+
 
 # ============================================================
 # GET VIDEO DETAILS
 # ============================================================
 
 def get_video_details(video_id):
-    
+    """
+    Retrieve video metadata from the YouTube Data API.
+    """
+
     api_key = get_api_key()
-    
+
     url = (
         "https://www.googleapis.com/youtube/v3/videos"
         "?part=snippet"
@@ -128,25 +145,25 @@ def get_video_details(video_id):
 
     if response.status_code != 200:
 
-    print(
-        f"Failed to fetch details for video "
-        f"{video_id} "
-        f"({response.status_code})"
-    )
+        print(
+            f"Failed to fetch details for video "
+            f"{video_id} "
+            f"({response.status_code})"
+        )
 
-    print(response.text)
+        print(response.text)
 
-    return {}
+        return {}
 
     data = response.json()
 
     if not data.get("items"):
 
-    print(
-        f"No details found for video: {video_id}"
-    )
+        print(
+            f"No details found for video: {video_id}"
+        )
 
-    return {}
+        return {}
 
     snippet = data["items"][0]["snippet"]
 
@@ -173,4 +190,3 @@ def get_video_details(video_id):
         )
 
     }
-
