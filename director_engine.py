@@ -15,6 +15,10 @@ MAX_SCENES = 15
 
 MAX_RETRY = 3
 
+DIRECTOR_TEMPERATURE = 0.7
+
+DIRECTOR_MAX_TOKENS = 4096
+
 CAMERAS = [
 
     "static",
@@ -265,6 +269,8 @@ REQUIRED_PLAN_FIELDS = [
 # CINEMATIC BLUEPRINT TEMPLATE
 # ============================================================
 
+BLUEPRINT_VERSION = "1.0"
+
 BLUEPRINT_TEMPLATE = {
 
     "title": "",
@@ -334,6 +340,8 @@ SUPPORTED_OUTPUT_PROFILES = [
     "tiktok"
 
 ]
+
+DEFAULT_OUTPUT_PROFILE = "youtube_shorts"
 
 # ============================================================
 # DIRECTOR ENGINE FUNCTIONS
@@ -406,7 +414,7 @@ def build_director_prompt(
     Build the AI prompt that instructs the model to generate
     a Cinematic Blueprint.
     """
-        prompt = f"""
+    prompt = f"""
 {DIRECTOR_SYSTEM_ROLE}
 
 {DIRECTOR_RULES}
@@ -433,35 +441,112 @@ Return a complete Cinematic Blueprint.
 
 def call_ai_director(prompt):
     """
-    Send the prompt to the configured AI provider and
-    return the raw response.
+    Send the prompt to the configured AI provider
+    and return the raw AI response.
     """
-    pass
+
+    response = generate_text(
+        prompt=prompt,
+        temperature=DIRECTOR_TEMPERATURE,
+        max_tokens=DIRECTOR_MAX_TOKENS,
+    )
+
+    return response
 
 
 def normalize_cinematic_blueprint(raw_response):
     """
-    Convert the AI response into the standard
-    Cinematic Blueprint structure.
+    Convert the raw AI response into a Python dictionary.
     """
-    pass
+
+    # Remove markdown code fences if present
+    cleaned = re.sub(
+        r"^```(?:json)?|```$",
+        "",
+        raw_response.strip(),
+        flags=re.MULTILINE,
+    ).strip()
+
+    try:
+        blueprint = json.loads(cleaned)
+
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            f"Invalid JSON returned by AI: {e}"
+        ) from e
+
+    return blueprint
 
 
 def validate_cinematic_blueprint(blueprint):
     """
-    Validate that the Cinematic Blueprint contains all
-    required fields.
+    Validate the Cinematic Blueprint structure.
     """
-    pass
+
+    # Validate top-level fields
+    for field in REQUIRED_PLAN_FIELDS:
+
+        if field not in blueprint:
+
+            raise RuntimeError(
+                f"Missing required blueprint field: {field}"
+            )
+
+    # Validate scenes
+    scenes = blueprint.get("scenes")
+
+    if not isinstance(scenes, list):
+
+        raise RuntimeError(
+            "'scenes' must be a list."
+        )
+
+    if len(scenes) == 0:
+
+        raise RuntimeError(
+            "Blueprint contains no scenes."
+        )
+
+    # Validate every scene
+    for index, scene in enumerate(scenes, start=1):
+
+        for field in REQUIRED_SCENE_FIELDS:
+
+            if field not in scene:
+
+                raise RuntimeError(
+                    f"Scene {index} is missing required field: {field}"
+                )
+
+    return True
 
 
 def create_cinematic_blueprint(
     topic,
     research,
     script,
-    output_profile=DEFAULT_OUTPUT_PROFILE
+    output_profile=DEFAULT_OUTPUT_PROFILE,
 ):
     """
-    Main public function of the Director Engine.
+    Generate a validated Cinematic Blueprint.
     """
-    pass
+
+    # Step 1 - Build prompt
+    prompt = build_director_prompt(
+        topic=topic,
+        research=research,
+        script=script,
+        output_profile=output_profile,
+    )
+
+    # Step 2 - Generate AI response
+    raw_response = call_ai_director(prompt)
+
+    # Step 3 - Convert JSON to dictionary
+    blueprint = normalize_cinematic_blueprint(raw_response)
+
+    # Step 4 - Validate blueprint
+    validate_cinematic_blueprint(blueprint)
+
+    # Step 5 - Return final blueprint
+    return blueprint
