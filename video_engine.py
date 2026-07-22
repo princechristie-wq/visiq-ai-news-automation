@@ -109,6 +109,91 @@ OUTPUT_VIDEO_FILE = "final_video.mp4"
 
 
 # ============================================================
+# ASSET MANAGER
+# ============================================================
+
+import shutil
+from pathlib import Path
+
+
+OUTPUT_ROOT = "output"
+
+
+def create_package_directory(package_name):
+    """
+    Create a package directory for one generated video.
+
+    Example:
+
+    output/
+        package_001/
+    """
+
+    package_path = Path(OUTPUT_ROOT) / package_name
+
+    package_path.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    return package_path
+
+
+def create_asset_directories(package_path):
+    """
+    Create all folders required by one video package.
+    """
+
+    directories = {
+
+        "package": package_path,
+
+        "assets": package_path / "assets",
+
+        "audio": package_path / "audio",
+
+        "thumbnails": package_path / "thumbnails",
+
+        "renders": package_path / "renders",
+
+        "metadata": package_path / "metadata"
+
+    }
+
+    for directory in directories.values():
+
+        if directory != package_path:
+
+            directory.mkdir(
+                parents=True,
+                exist_ok=True
+            )
+
+    return directories
+
+
+def get_asset_paths(asset_dirs):
+    """
+    Build all file paths used by the Video Engine.
+    """
+
+    return {
+
+        "background":
+            asset_dirs["assets"] / "background.jpg",
+
+        "voice":
+            asset_dirs["audio"] / "voice.mp3",
+
+        "thumbnail":
+            asset_dirs["thumbnails"] / "thumbnail.jpg",
+
+        "video":
+            asset_dirs["renders"] / "final_video.mp4"
+
+    }
+
+# ============================================================
 # VALIDATION
 # ============================================================
 
