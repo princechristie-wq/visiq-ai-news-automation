@@ -117,6 +117,60 @@ def _call_visual_ai(prompt):
         max_tokens=VISUAL_MAX_TOKENS
     )
 
+def _parse_visual_response(result):
+    """
+    Parses the AI response into a Python dictionary.
+    """
+
+    try:
+        return json.loads(result)
+
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            f"Visual Engine returned invalid JSON: {e}"
+        )
+
+def _normalize_visual_response(visual, scene):
+    """
+    Adds default values for any missing fields
+    returned by the AI.
+    """
+
+    visual.setdefault(
+        "visual_type",
+        "image"
+    )
+
+    visual.setdefault(
+        "search_query",
+        ""
+    )
+
+    visual.setdefault(
+        "image_prompt",
+        scene.get(
+            "image_prompt",
+            "A cinematic, photorealistic illustration."
+        )
+    )
+
+    visual.setdefault(
+        "negative_prompt",
+        ""
+    )
+
+    visual.setdefault(
+        "visual_keywords",
+        []
+    )
+
+    visual.setdefault(
+        "generation_model",
+        DEFAULT_IMAGE_PROVIDER
+    )
+
+    return visual
+
 def generate_visual_decision(scene):
     """
     Generate a visual decision for a single
@@ -150,50 +204,15 @@ def generate_visual_decision(scene):
 
         }
 
-    try:
-
-        visual = json.loads(result)
-
-    except json.JSONDecodeError:
-
-        raise RuntimeError(
-            "Visual Engine returned invalid JSON."
-        )
+    visual = _parse_visual_response(result)
+    
     # --------------------------------------------------------
     # Normalize Missing Fields
     # --------------------------------------------------------
 
-    visual.setdefault(
-        "visual_type",
-        "image"
-    )
-
-    visual.setdefault(
-        "search_query",
-        ""
-    )
-
-    visual.setdefault(
-        "image_prompt",
-        scene.get(
-            "image_prompt",
-            "A cinematic, photorealistic illustration."
-        )
-    )
-    
-    visual.setdefault(
-        "negative_prompt",
-        ""
-    )
-
-    visual.setdefault(
-        "visual_keywords",
-        []
-    )
-
-    visual.setdefault(
-        "generation_model",
-        DEFAULT_IMAGE_PROVIDER
+    visual = _normalize_visual_response(
+        visual,
+        scene
     )
         
     # --------------------------------------------------------
