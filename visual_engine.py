@@ -4,7 +4,19 @@ from ai_provider import generate_text
 # VISUAL ENGINE CONFIGURATION
 # ============================================================
 
-IMAGE_MODEL = "flux"
+DEFAULT_IMAGE_PROVIDER = "flux"
+
+SUPPORTED_IMAGE_PROVIDERS = [
+
+    "flux",
+
+    "stable_diffusion",
+
+    "imagen",
+
+    "dalle"
+
+]
 
 # ============================================================
 # BUILD VISUAL PROMPT
@@ -56,14 +68,19 @@ Rules:
 - No watermark.
 - No logo.
 
-Return EXACTLY:
+Return ONLY valid JSON.
 
-VISUAL_TYPE: stock OR image
-SEARCH_QUERY: ...
-IMAGE_PROMPT: ...
+Do not use markdown.
 
-Return nothing else.
-"""
+Do not explain anything.
+
+Return exactly this structure:
+
+{
+    "visual_type": "image",
+    "search_query": "robot laboratory",
+    "image_prompt": "A cinematic photorealistic robot inside a futuristic laboratory."
+}
 
 # ============================================================
 # GENERATE VISUAL DECISION
