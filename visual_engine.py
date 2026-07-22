@@ -81,7 +81,15 @@ Return exactly this structure:
 {
     "visual_type": "image",
     "search_query": "robot laboratory",
-    "image_prompt": "A cinematic photorealistic robot inside a futuristic laboratory."
+    "image_prompt": "A cinematic photorealistic robot inside a futuristic laboratory.",
+    "negative_prompt": "blurry, watermark, logo, text, low quality, deformed anatomy",
+    "visual_keywords": [
+        "robot",
+        "AI",
+        "laboratory",
+        "future"
+    ],
+    "generation_model": "flux"
 }
 
 # ============================================================
