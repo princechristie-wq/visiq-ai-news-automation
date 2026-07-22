@@ -20,6 +20,11 @@ SUPPORTED_IMAGE_PROVIDERS = [
 
 ]
 
+SUPPORTED_VISUAL_TYPES = [
+    "image",
+    "stock"
+]
+
 # ============================================================
 # BUILD VISUAL PROMPT
 # ============================================================
@@ -91,10 +96,23 @@ Return exactly this structure:
     ],
     "generation_model": "flux"
 }
+"""
 
 # ============================================================
 # GENERATE VISUAL DECISION
 # ============================================================
+
+def _call_visual_ai(prompt):
+    """
+    Sends the visual prompt to the AI provider.
+    Returns the raw AI response.
+    """
+
+    return generate_text(
+        prompt,
+        temperature=VISUAL_TEMPERATURE,
+        max_tokens=VISUAL_MAX_TOKENS
+    )
 
 def generate_visual_decision(scene):
     """
@@ -106,7 +124,7 @@ def generate_visual_decision(scene):
 
     try:
 
-        result = generate_text(
+        result = _call_visual_ai(
             prompt
         ).strip()
 
@@ -160,16 +178,26 @@ def generate_visual_decision(scene):
         )
     )
     
+    visual.setdefault(
+        "negative_prompt",
+        ""
+    )
+
+    visual.setdefault(
+        "visual_keywords",
+        []
+    )
+
+    visual.setdefault(
+        "generation_model",
+        DEFAULT_IMAGE_PROVIDER
+    )
         
     # --------------------------------------------------------
     # Validation
     # --------------------------------------------------------
 
-    if visual["visual_type"] not in (
-        "stock",
-        "image"
-    ):
-
+    if visual["visual_type"] not in SUPPORTED_VISUAL_TYPES:
         visual["visual_type"] = "image"
 
     if (
@@ -227,10 +255,16 @@ def enhance_scene_plan(cinematic_blueprint):
 
             "search_query": visual["search_query"],
 
-            "enhanced_image_prompt": visual["image_prompt"]
+            "enhanced_image_prompt": visual["image_prompt"],
+
+            "negative_prompt": visual["negative_prompt"],
+
+            "visual_keywords": visual["visual_keywords"],
+
+            "generation_model": visual["generation_model"]
 
         })
-
+        
         plan.append(
             enhanced_scene
         )
