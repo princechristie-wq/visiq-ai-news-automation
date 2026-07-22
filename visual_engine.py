@@ -1,88 +1,44 @@
-import random
-
 from ai_provider import generate_text
-from config import PRIMARY_MODEL
 
 # ============================================================
 # VISUAL ENGINE CONFIGURATION
 # ============================================================
 
-TOTAL_SCENES = 10
-
-IMAGE_WIDTH = 768
-
-IMAGE_HEIGHT = 1344
-
 IMAGE_MODEL = "flux"
-
-# ============================================================
-# SPLIT SCRIPT INTO SCENES
-# ============================================================
-
-def split_script_into_scenes(script):
-    """
-    Divide the narration into evenly sized scenes.
-    """
-
-    words = script.split()
-
-    words_per_scene = max(
-        len(words) // TOTAL_SCENES,
-        1
-    )
-
-    scenes = []
-
-    for i in range(TOTAL_SCENES):
-
-        start = i * words_per_scene
-
-        if i == TOTAL_SCENES - 1:
-            end = len(words)
-        else:
-            end = start + words_per_scene
-
-        scene_text = " ".join(
-            words[start:end]
-        )
-
-        scenes.append(scene_text)
-
-    return scenes
-
-
-# ============================================================
-# MOTION TYPES
-# ============================================================
-
-MOTION_TYPES = [
-
-    "zoom_in",
-    "zoom_out",
-    "pan_left",
-    "pan_right",
-    "pan_up",
-    "pan_down"
-
-]
-
 
 # ============================================================
 # BUILD VISUAL PROMPT
 # ============================================================
 
-def build_visual_prompt(scene_text):
+def build_visual_prompt(scene):
     """
     Build the prompt that decides which visual
-    should represent the narration.
+    should represent the Director Engine scene.
     """
 
     return f"""
 You are an expert cinematic storyboard artist for YouTube Shorts.
 
-Narration:
+Scene Number:
+{scene["scene_number"]}
 
-{scene_text}
+Narration:
+{scene["narration"]}
+
+Camera:
+{scene["camera"]}
+
+Lighting:
+{scene["lighting"]}
+
+Emotion:
+{scene["emotion"]}
+
+Base Image Prompt:
+{scene["image_prompt"]}
+
+Negative Prompt:
+{scene["negative_prompt"]}
 
 Decide the single best visual.
 
@@ -113,15 +69,13 @@ Return nothing else.
 # GENERATE VISUAL DECISION
 # ============================================================
 
-def generate_visual_decision(scene_text):
+def generate_visual_decision(scene):
     """
-    Generate a visual decision for a single scene using
-    the configured AI provider.
+    Generate a visual decision for a single
+    Director Engine scene.
     """
 
-    prompt = build_visual_prompt(
-        scene_text
-    )
+    prompt = build_visual_prompt(scene)
 
     try:
 
@@ -141,9 +95,9 @@ def generate_visual_decision(scene_text):
 
             "search_query": "",
 
-            "image_prompt": (
-                "A cinematic, photorealistic illustration "
-                "matching the narration."
+            "image_prompt": scene.get(
+                "image_prompt",
+                "A cinematic, photorealistic illustration."
             )
 
         }
@@ -209,69 +163,63 @@ def generate_visual_decision(scene_text):
         and not visual["image_prompt"]
     ):
 
-        visual["image_prompt"] = (
-            "A cinematic, photorealistic illustration "
-            "matching the narration."
+        visual["image_prompt"] = scene.get(
+            "image_prompt",
+            "A cinematic, photorealistic illustration."
         )
 
     return visual
 
+
 # ============================================================
-# CREATE SCENE PLAN
+# ENHANCE SCENE PLAN
 # ============================================================
 
-def create_scene_plan(script):
+def enhance_scene_plan(cinematic_blueprint):
     """
-    Create a complete scene-by-scene storyboard for the script.
+    Enhance every Director Engine scene with
+    visual generation information.
     """
-
-    scenes = split_script_into_scenes(script)
 
     plan = []
 
-    previous_motion = None
+    scenes = cinematic_blueprint.get(
+        "scenes",
+        []
+    )
 
     total_scenes = len(scenes)
 
-    print(f"Generating storyboard ({total_scenes} scenes)...")
+    print(
+        f"Generating storyboard ({total_scenes} scenes)..."
+    )
 
-    for scene_number, scene in enumerate(scenes, start=1):
+    for scene_number, scene in enumerate(
+        scenes,
+        start=1
+    ):
 
-        print(f"  Scene {scene_number}/{total_scenes}")
+        print(
+            f"  Scene {scene_number}/{total_scenes}"
+        )
 
         visual = generate_visual_decision(scene)
 
-        available_motions = [
+        enhanced_scene = scene.copy()
 
-            motion
-
-            for motion in MOTION_TYPES
-
-            if motion != previous_motion
-
-        ]
-
-        selected_motion = random.choice(
-            available_motions
-        )
-
-        previous_motion = selected_motion
-
-        plan.append({
-
-            "scene_number": scene_number,
-
-            "narration": scene,
+        enhanced_scene.update({
 
             "visual_type": visual["visual_type"],
 
             "search_query": visual["search_query"],
 
-            "image_prompt": visual["image_prompt"],
-
-            "motion": selected_motion
+            "image_prompt": visual["image_prompt"]
 
         })
+
+        plan.append(
+            enhanced_scene
+        )
 
     return plan
 
@@ -280,64 +228,41 @@ def create_scene_plan(script):
 # PUBLIC FUNCTION
 # ============================================================
 
-def generate_visual_plan(knowledge_packages):
+def create_visual_blueprint(cinematic_blueprint):
     """
-    Generate visual storyboards for all scripts.
+    Enhance a Director Engine cinematic blueprint
+    with optimized visual generation information.
+
+    Args:
+        cinematic_blueprint (dict): Blueprint generated
+            by the Director Engine.
 
     Returns:
-        list[dict]: Knowledge packages with scene plans.
+        dict: Enhanced cinematic blueprint.
     """
 
-    visual_packages = []
+    try:
 
-    total = len(knowledge_packages)
-
-    print("=" * 80)
-    print("GENERATING VISUAL PLANS...")
-    print("=" * 80)
-
-    for index, knowledge in enumerate(
-        knowledge_packages,
-        start=1
-    ):
-
-        print(f"[{index}/{total}] {knowledge['title']}")
-
-        try:
-
-            script = knowledge.get(
-                "script",
-                ""
-            )
-
-            if not script.strip():
-
-                raise ValueError(
-                    "Script is empty."
-                )
-
-            knowledge["scene_plan"] = create_scene_plan(
-                script
-            )
-
-        except Exception as e:
-
-            print(
-                f"Visual plan generation failed: {e}"
-            )
-
-            knowledge["scene_plan"] = []
-
-            knowledge["visual_error"] = str(e)
-
-        visual_packages.append(
-            knowledge
+        enhanced_scene_plan = enhance_scene_plan(
+            cinematic_blueprint
         )
 
-    print("=" * 80)
-    print(
-        f"Successfully generated {len(visual_packages)} visual plan(s)"
-    )
-    print("=" * 80)
+        enhanced_blueprint = cinematic_blueprint.copy()
 
-    return visual_packages
+        enhanced_blueprint["scenes"] = (
+            enhanced_scene_plan
+        )
+
+        return enhanced_blueprint
+
+    except Exception as e:
+
+        print(
+            f"Visual blueprint generation failed: {e}"
+        )
+
+        cinematic_blueprint["scenes"] = []
+
+        cinematic_blueprint["visual_error"] = str(e)
+
+        return cinematic_blueprint
