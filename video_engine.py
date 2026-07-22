@@ -236,7 +236,8 @@ def validate_package(knowledge):
 # ============================================================
 
 async def _generate_voice_async(
-    script
+    script,
+    output_file
 ):
     """
     Generate narration using Microsoft Edge TTS.
@@ -253,12 +254,13 @@ async def _generate_voice_async(
     )
 
     await communicate.save(
-        VOICE_FILE
+        output_file
     )
 
 
 def generate_voice(
-    script
+    script,
+    output_file=VOICE_FILE
 ):
     """
     Generate narration audio.
@@ -277,12 +279,13 @@ def generate_voice(
 
     asyncio.run(
         _generate_voice_async(
-            script
+            script,
+            output_file
         )
     )
 
     if not os.path.exists(
-        VOICE_FILE
+        output_file
     ):
 
         raise RuntimeError(
@@ -291,14 +294,15 @@ def generate_voice(
 
     print("Narration created.")
 
-    return VOICE_FILE
+    return output_file
 
 # ============================================================
 # IMAGE GENERATION
 # ============================================================
 
 def generate_images(
-    scene_plan
+    scene_plan,
+    assets_directory="."
 ):
     """
     Generate one image for every scene.
@@ -407,8 +411,9 @@ def generate_images(
                 f"Image generation failed for Scene {scene_number}"
             )
 
-        filename = (
-            f"image_{scene_number}.jpg"
+        filename = os.path.join(
+            assets_directory,
+            f"scene_{scene_number:03d}.jpg"
         )
 
         with open(
@@ -507,7 +512,10 @@ def create_background():
 # CREATE THUMBNAIL
 # ============================================================
 
-def create_thumbnail(topic):
+def create_thumbnail(
+    topic,
+    output_file=THUMBNAIL_FILE
+):
     """
     Create a thumbnail using the first generated image.
     """
@@ -586,34 +594,36 @@ def create_thumbnail(topic):
         y += 95
 
     cv2.imwrite(
-        THUMBNAIL_FILE,
+        output_file,
         image
     )
 
     print("Thumbnail created.")
 
-    return THUMBNAIL_FILE
+    return output_file
 
 
 # ============================================================
 # LOAD VOICE
 # ============================================================
 
-def load_voice():
+def load_voice(
+    voice_file=VOICE_FILE
+):
     """
     Load the narration audio.
     """
 
     if not os.path.exists(
-        VOICE_FILE
+        voice_file
     ):
 
         raise FileNotFoundError(
-            f"Voice file not found: {VOICE_FILE}"
+            f"Voice file not found: {voice_file}"
         )
 
     return AudioFileClip(
-        VOICE_FILE
+        voice_file
     )
 
 
@@ -1005,6 +1015,19 @@ def create_videos(
         visual_packages,
         start=1
     ):
+        package_name = f"package_{index:03d}"
+
+        package_path = create_package_directory(
+            package_name
+        )
+
+        asset_dirs = create_asset_directories(
+            package_path
+        )
+
+        asset_paths = get_asset_paths(
+            asset_dirs
+        )
 
         title = knowledge.get(
             "title",
@@ -1033,24 +1056,29 @@ def create_videos(
             print("Generating images...")
 
             generate_images(
-            knowledge["scene_plan"]
+                knowledge["scene_plan"],
+                asset_dirs["assets"]
             )
 
             print("Creating thumbnail...")
 
             create_thumbnail(
-            title
+                title,
+                asset_paths["thumbnail"]
             )
 
             print("Generating narration...")
 
             generate_voice(
-            knowledge["script"]
+                knowledge["script"],
+                asset_paths["voice"]
             )
 
             print("Loading narration...")
 
-            voice = load_voice()
+            voice = load_voice(
+                asset_paths["voice"]
+            )
             
             print("Loading background music...")
             music, music_file = load_background_music(
@@ -1112,7 +1140,8 @@ def create_videos(
             print("Exporting...")
 
             export_video(
-                video
+                video,
+                asset_paths["video"]
             )
 
             knowledge["video_file"] = OUTPUT_VIDEO_FILE
@@ -1162,19 +1191,20 @@ def create_videos(
 # ============================================================
 
 def export_video(
-    video
+    video,
+    output_file=OUTPUT_VIDEO_FILE
 ):
     """
     Export the final video.
     """
 
     print(
-        f"Exporting {OUTPUT_VIDEO_FILE}..."
+        f"Exporting {output_file}..."
     )
 
     video.write_videofile(
 
-        OUTPUT_VIDEO_FILE,
+        output_file,
 
         fps=FPS,
 
