@@ -1,3 +1,5 @@
+import json
+
 from ai_provider import generate_text
 
 # ============================================================
@@ -119,51 +121,38 @@ def generate_visual_decision(scene):
 
         }
 
-    visual = {
+    try:
 
-        "visual_type": "image",
+        visual = json.loads(result)
 
-        "search_query": "",
+    except json.JSONDecodeError:
 
-        "image_prompt": ""
+        raise RuntimeError(
+            "Visual Engine returned invalid JSON."
+        )
+    # --------------------------------------------------------
+    # Normalize Missing Fields
+    # --------------------------------------------------------
 
-    }
+    visual.setdefault(
+        "visual_type",
+        "image"
+    )
 
-    for line in result.splitlines():
+    visual.setdefault(
+        "search_query",
+        ""
+    )
 
-        line = line.strip()
-
-        if line.startswith("VISUAL_TYPE:"):
-
-            visual["visual_type"] = (
-                line.replace(
-                    "VISUAL_TYPE:",
-                    ""
-                )
-                .strip()
-                .lower()
-            )
-
-        elif line.startswith("SEARCH_QUERY:"):
-
-            visual["search_query"] = (
-                line.replace(
-                    "SEARCH_QUERY:",
-                    ""
-                )
-                .strip()
-            )
-
-        elif line.startswith("IMAGE_PROMPT:"):
-
-            visual["image_prompt"] = (
-                line.replace(
-                    "IMAGE_PROMPT:",
-                    ""
-                )
-                .strip()
-            )
-
+    visual.setdefault(
+        "image_prompt",
+        scene.get(
+            "image_prompt",
+            "A cinematic, photorealistic illustration."
+        )
+    )
+    
+        
     # --------------------------------------------------------
     # Validation
     # --------------------------------------------------------
@@ -230,7 +219,7 @@ def enhance_scene_plan(cinematic_blueprint):
 
             "search_query": visual["search_query"],
 
-            "image_prompt": visual["image_prompt"]
+            "enhanced_image_prompt": visual["image_prompt"]
 
         })
 
