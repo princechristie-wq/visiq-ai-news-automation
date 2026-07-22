@@ -435,7 +435,9 @@ def generate_images(
 # CREATE BACKGROUND
 # ============================================================
 
-def create_background():
+def create_background(
+    output_file=BACKGROUND_FILE
+):
     """
     Create the default Visiq AI background.
     """
@@ -501,11 +503,11 @@ def create_background():
     )
 
     cv2.imwrite(
-        BACKGROUND_FILE,
+        output_file,
         image
     )
 
-    return BACKGROUND_FILE
+    return output_file
 
 
 # ============================================================
@@ -514,7 +516,8 @@ def create_background():
 
 def create_thumbnail(
     topic,
-    output_file=THUMBNAIL_FILE
+    output_file=THUMBNAIL_FILE,
+    assets_directory="."
 ):
     """
     Create a thumbnail using the first generated image.
@@ -523,8 +526,12 @@ def create_thumbnail(
     width = VIDEO_WIDTH
     height = VIDEO_HEIGHT
 
-    image = cv2.imread("image_1.jpg")
-
+    image = cv2.imread(
+        os.path.join(
+            assets_directory,
+            "scene_001.jpg"
+        )
+    )
     if image is None:
 
         raise FileNotFoundError(
@@ -705,7 +712,8 @@ def create_final_audio(
 
 def prepare_image_clips(
     scene_plan,
-    audio_duration
+    audio_duration,
+    assets_directory="."
 ):
     """
     Prepare image clips with simple motion effects.
@@ -729,8 +737,11 @@ def prepare_image_clips(
             index + 1
         )
 
-        image_file = f"image_{scene_number}.jpg"
-
+        image_file = os.path.join(
+            assets_directory,
+            f"scene_{scene_number:03d}.jpg"
+        )
+        
         if not os.path.exists(image_file):
 
             print(
@@ -1051,7 +1062,10 @@ def create_videos(
             )
 
             print("Creating background...")
-            create_background()
+
+            create_background(
+                asset_paths["background"]
+            )
 
             print("Generating images...")
 
@@ -1064,7 +1078,8 @@ def create_videos(
 
             create_thumbnail(
                 title,
-                asset_paths["thumbnail"]
+                asset_paths["thumbnail"],
+                asset_dirs["assets"]
             )
 
             print("Generating narration...")
@@ -1097,7 +1112,9 @@ def create_videos(
             print("Preparing background clip...")
 
             background = (
-                ImageClip(BACKGROUND_FILE)
+                ImageClip(
+                    asset_paths["background"]
+                )
                 .with_duration(duration)
             )
 
@@ -1105,7 +1122,8 @@ def create_videos(
 
             image_clips = prepare_image_clips(
                 knowledge["scene_plan"],
-                duration
+                duration,
+                asset_dirs["assets"]
             )
 
             print("Creating headline...")
@@ -1144,8 +1162,9 @@ def create_videos(
                 asset_paths["video"]
             )
 
-            knowledge["video_file"] = OUTPUT_VIDEO_FILE
-            knowledge["thumbnail_file"] = THUMBNAIL_FILE
+            knowledge["video_file"] = str(asset_paths["video"])
+            knowledge["thumbnail_file"] = str(asset_paths["thumbnail"])
+            knowledge["background_file"] = str(asset_paths["background"])
             knowledge["background_music"] = music_file
 
             print("Video completed successfully.")
