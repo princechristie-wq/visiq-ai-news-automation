@@ -414,7 +414,7 @@ def build_director_prompt(
     Build the AI prompt that instructs the model to generate
     a Cinematic Blueprint.
     """
-    prompt = f"""
+prompt = f"""
 {DIRECTOR_SYSTEM_ROLE}
 
 {DIRECTOR_RULES}
@@ -423,6 +423,20 @@ def build_director_prompt(
 
 Output Profile:
 {output_profile}
+
+Blueprint Version:
+{BLUEPRINT_VERSION}
+
+Video Requirements:
+
+- Generate between {MIN_SCENES} and {MAX_SCENES} scenes.
+- Each scene should be approximately {DEFAULT_SCENE_DURATION} seconds.
+- The first scene must contain a strong visual hook.
+- The last scene should conclude naturally and support the call-to-action if present.
+- Every scene should introduce a unique visual concept.
+- Avoid repeating subjects, backgrounds, and camera movements unless required by the narration.
+- Keep pacing fast and optimized for audience retention.
+- Ensure smooth visual continuity between consecutive scenes.
 
 Topic:
 {topic}
@@ -433,26 +447,45 @@ Research:
 Narration:
 {script}
 
-Return a complete Cinematic Blueprint.
+Return ONLY valid JSON matching the following Cinematic Blueprint template:
+
+{json.dumps(BLUEPRINT_TEMPLATE, indent=2)}
 """
-
-    return prompt
-
 
 def call_ai_director(prompt):
     """
     Send the prompt to the configured AI provider
     and return the raw AI response.
+
+    Automatically retries on temporary failures.
     """
 
-    response = generate_text(
-        prompt=prompt,
-        temperature=DIRECTOR_TEMPERATURE,
-        max_tokens=DIRECTOR_MAX_TOKENS,
-    )
+    last_error = None
 
-    return response
+    for attempt in range(1, MAX_RETRY + 1):
 
+        try:
+
+            response = generate_text(
+                prompt=prompt,
+                temperature=DIRECTOR_TEMPERATURE,
+                max_tokens=DIRECTOR_MAX_TOKENS,
+            )
+
+            return response
+
+        except Exception as e:
+
+            last_error = e
+
+            print(
+                f"[Director Engine] "
+                f"Attempt {attempt}/{MAX_RETRY} failed: {e}"
+            )
+
+    raise RuntimeError(
+        f"Director Engine failed after {MAX_RETRY} attempts."
+    ) from last_error
 
 def normalize_cinematic_blueprint(raw_response):
     """
@@ -550,3 +583,42 @@ def create_cinematic_blueprint(
 
     # Step 5 - Return final blueprint
     return blueprint
+
+if __name__ == "__main__":
+
+    sample_topic = "Artificial Intelligence"
+
+    sample_research = """
+Artificial Intelligence is rapidly transforming industries through automation,
+large language models, robotics, and intelligent assistants.
+"""
+
+    sample_script = """
+Artificial Intelligence is changing the world faster than ever.
+From self-driving cars to AI assistants, the future is already here.
+Companies are investing billions into AI technology.
+But what does this mean for our everyday lives?
+Let's explore the biggest AI revolution happening right now.
+"""
+
+    try:
+
+        blueprint = create_cinematic_blueprint(
+            topic=sample_topic,
+            research=sample_research,
+            script=sample_script,
+        )
+
+        print("\n=== CINEMATIC BLUEPRINT ===\n")
+
+        print(
+            json.dumps(
+                blueprint,
+                indent=4,
+                ensure_ascii=False,
+            )
+        )
+
+    except Exception as e:
+
+        print(f"\nDirector Engine Error: {e}")
