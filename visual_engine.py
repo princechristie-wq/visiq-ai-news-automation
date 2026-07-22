@@ -8,6 +8,9 @@ from ai_provider import generate_text
 
 DEFAULT_IMAGE_PROVIDER = "flux"
 
+VISUAL_TEMPERATURE = 0.3
+VISUAL_MAX_TOKENS = 800
+
 SUPPORTED_IMAGE_PROVIDERS = [
 
     "flux",
